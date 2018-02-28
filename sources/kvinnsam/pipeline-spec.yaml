@@ -1,0 +1,29 @@
+download:
+  pipeline:
+  - run: download_libris_marcxml_data
+    parameters:
+      query: "db:kvin"
+      use-cache: true
+      out-path: ../../data/kvinnsam/marcxml
+
+
+parse:
+  pipeline:
+  - run: parse_libris_marcxml_data
+    parameters:
+      path: ../../data/kvinnsam/marcxml
+  - run: dump.to_path
+    parameters:
+      out-path: ../../data/kvinnsam
+
+
+dump_to_marc:
+  pipeline:
+  - run: load_resource
+    parameters:
+      url: ../../data/kvinnsam/datapackage.json
+      resource: records
+  - run: dump_to_marc
+    parameters:
+      out-path: ../../data/kvinnsam/marc
+      records-per-page: 500
