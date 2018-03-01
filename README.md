@@ -47,3 +47,19 @@ docker run -it --entrypoint bash -v `pwd`:/pipelines orihoch/knesset-data-pipeli
 Continue with `Running the pipelines locally` section above
 
 You can usually fix permissions problems on the files by running inside the docker `chown -R 1000:1000 .`
+
+
+## Syncing data from google storage
+
+```
+gsutil -m rsync -r gs://knesset-data-pipelines/hasadna-migdar-data/ori-sync-data ./data
+```
+
+
+## Syncing the data to google storage
+
+**Replace <YOUR_NAME> with your name - to prevent overwriting each other's data**
+
+```
+gsutil -m rsync -r ./data gs://knesset-data-pipelines/hasadna-migdar-data/<YOUR_NAME>-sync-data
+```

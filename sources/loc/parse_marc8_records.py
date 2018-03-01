@@ -55,7 +55,7 @@ resources = [get_records_resource()]
 datapackage["resources"] = [{PROP_STREAMING: True,
                              "name": "records",
                              "path": "records.csv",
-                             "schema": {"fields": [{"name": "pubyear", "type": "string"},
+                             "schema": {"fields": [{"name": "pubyear", "type": "integer"},
                                                    {"name": "title", "type": "string"},
                                                    # {"name": "record", "type": "object"},
                                                    ]}}]
