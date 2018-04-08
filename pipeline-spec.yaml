@@ -1,0 +1,67 @@
+extract-marc-metadata:
+  pipeline:
+  - run: load_resource
+    parameters:
+      url: data/nli/search-2017-03-18-13-42/search_results/datapackage.json
+      resource: unique_records
+      stream: false
+  - run: set_types
+    parameters:
+      resources: unique_records
+      types:
+        json: {type: string}
+  - run: stream_remote_resources
+  - run: extract_marc_metadata
+  - run: filter_lang
+    parameters:
+      lang: 'heb'
+    code: |
+      from datapackage_pipelines.wrapper import ingest, spew; import itertools
+      parameters, datapackage, resources, stats = ingest() + ({},)
+      def get_resource():
+        for resource in resources:
+          for row in resource:
+            if ' {} '.format(parameters['lang']) in ' {} '.format(row['language_code']):
+              yield row
+      spew(datapackage, (get_resource(),), stats)
+  - run: dump.to_path
+    parameters:
+      out-path: data/nli/extract_marc_metadata
+      resources: .*
+
+
+shard-marc-metadata:
+  pipeline:
+  - run: add_resource
+    parameters:
+      name: lc_topics
+      url: data/nli/topics.xlsx
+      format: xlsx
+      sheet: "LC"
+  - run: load_resource
+    parameters:
+      url: data/nli/extract_marc_metadata/datapackage.json
+      resource: marc_metadata
+      stream: false
+  - run: stream_remote_resources
+  - run: shard_marc_metadata
+  - run: dump.to_path
+    parameters:
+      out-path: data/nli/shard_marc_metadata
+      resources: .*
+
+
+split-marc-metadata:
+  pipeline:
+  - run: load_resource
+    parameters:
+      url: data/nli/shard_marc_metadata/datapackage.json
+      resource: marc_metadata
+  - run: sort
+    parameters:
+      resources: marc_metadata
+      sort-by: "{topic}"
+  - run: split_marc_metadata
+    parameters:
+      out-path: data/nli/split_marc_metadata
+

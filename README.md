@@ -63,3 +63,11 @@ gsutil -m rsync -r gs://knesset-data-pipelines/hasadna-migdar-data/ori-sync-data
 ```
 gsutil -m rsync -r ./data gs://knesset-data-pipelines/hasadna-migdar-data/<YOUR_NAME>-sync-data
 ```
+
+
+## Running nli search queries
+
+```
+docker pull orihoch/nli-z3950 &&\
+docker run -it -v `pwd`/data/nli/search-2017-03-18-13-42:/data orihoch/nli-z3950 run ./search
+```
