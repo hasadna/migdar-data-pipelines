@@ -1,5 +1,8 @@
 # Migdar Data Pipelines
 
+## Quickstart
+
+[QUICKSTART.ipynb](QUICKSTART.ipynb)
 
 ## Running the pipelines locally
 
