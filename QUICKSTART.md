@@ -169,7 +169,8 @@ def load_from_gdrive_files(rows):
                             
 
 Flow(
-    load('https://migdar-internal-search.odata.org.il/__data/search_import/index.csv', http_session=migdar_session),
+    load('https://migdar-internal-search.odata.org.il/__data/search_import/index.csv', 
+         encoding='utf-8', http_session=migdar_session),
     update_resource('index', name='search_import_index', path='search_import_index.csv'),
     load_from_gdrive_files,
     update_resource('search_import_index', name='search_import', path='search_import.csv',
@@ -183,16 +184,18 @@ Flow(
 <h3>search_import</h3>
 
 
+    https://migdar-internal-search.odata.org.il/__data/search_import/2018-10-15- ORLY- Gender in conflict + mainstreaming+ based analysis +Income distribution.xlsx
+    #1.2018-10-15- ORLY- Gender in conflict + mainstreaming+ based analysis +Income distribution.xlsx/מקוטלגים: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-10-16- ORLY - Feminism and Science_HEB.xlsx
-    #1.2018-10-16- ORLY - Feminism and Science_HEB.xlsx/מקוטלגים: loading sheet
+    #2.2018-10-16- ORLY - Feminism and Science_HEB.xlsx/מקוטלגים: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-08-30- ORLY - Sex discriminationHEB.xlsx
-    #2.2018-08-30- ORLY - Sex discriminationHEB.xlsx/מקוטלגים: loading sheet
+    #3.2018-08-30- ORLY - Sex discriminationHEB.xlsx/מקוטלגים: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-08-29- Talia - Employee rights_heb.xlsx
-    #3.2018-08-29- Talia - Employee rights_heb.xlsx/Sheet1: loading sheet
+    #4.2018-08-29- Talia - Employee rights_heb.xlsx/Sheet1: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-08-10- Havatzelet- Feminsm  HEB.xlsx
-    #4.2018-08-10- Havatzelet- Feminsm  HEB.xlsx/מקוטלגים: loading sheet
+    #5.2018-08-10- Havatzelet- Feminsm  HEB.xlsx/מקוטלגים: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-08-26 women_committee_background_material.xlsx
-    #5.2018-08-26 women_committee_background_material.xlsx/women_committee_background_mate: loading sheet
+    #6.2018-08-26 women_committee_background_material.xlsx/women_committee_background_mate: loading sheet
         2018-08-26 women_committee_background_material.xlsx/women_committee_background_mate#0: missing migdar_id
         2018-08-26 women_committee_background_material.xlsx/women_committee_background_mate#7: missing migdar_id
         2018-08-26 women_committee_background_material.xlsx/women_committee_background_mate#9: missing migdar_id
@@ -221,84 +224,84 @@ Flow(
         2018-08-26 women_committee_background_material.xlsx/women_committee_background_mate#176: missing migdar_id
         2018-08-26 women_committee_background_material.xlsx/women_committee_background_mate#178: missing migdar_id
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-08-26  women_committee_protocols.xlsx
-    #6.2018-08-26  women_committee_protocols.xlsx/women_committee_protocols: loading sheet
+    #7.2018-08-26  women_committee_protocols.xlsx/women_committee_protocols: loading sheet
         2018-08-26  women_committee_protocols.xlsx/women_committee_protocols#0: missing migdar_id
         2018-08-26  women_committee_protocols.xlsx/women_committee_protocols#1: missing migdar_id
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-08-16- Havatzelet- Feminist Criticism  HEB.xlsx
-    #7.2018-08-16- Havatzelet- Feminist Criticism  HEB.xlsx/מקוטלגים: loading sheet
+    #8.2018-08-16- Havatzelet- Feminist Criticism  HEB.xlsx/מקוטלגים: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-09-03- Havatzelet- Femininity  HEB.xlsx
-    #8.2018-09-03- Havatzelet- Femininity  HEB.xlsx/מקוטלגים: loading sheet
+    #9.2018-09-03- Havatzelet- Femininity  HEB.xlsx/מקוטלגים: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-08-12- Talia - Domestic relations courts heb  .xlsx
-    #9.2018-08-12- Talia - Domestic relations courts heb  .xlsx/רשימת פריטים: loading sheet
+    #10.2018-08-12- Talia - Domestic relations courts heb  .xlsx/רשימת פריטים: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-05-29- ORLY -buisenesswomen - ENG.xlsx
-    #10.2018-05-29- ORLY -buisenesswomen - ENG.xlsx/מקוטלגים: loading sheet
-    #10.2018-05-29- ORLY -buisenesswomen - ENG.xlsx/Sheet2: loading sheet
+    #11.2018-05-29- ORLY -buisenesswomen - ENG.xlsx/מקוטלגים: loading sheet
+    #11.2018-05-29- ORLY -buisenesswomen - ENG.xlsx/Sheet2: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-07-30- Ayelet - Family violence  heb.xlsx
-    #11.2018-07-30- Ayelet - Family violence  heb.xlsx/Sheet1: loading sheet
+    #12.2018-07-30- Ayelet - Family violence  heb.xlsx/Sheet1: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-08-23- Havatzelet- Feminist Theory  HEB.xlsx
-    #12.2018-08-23- Havatzelet- Feminist Theory  HEB.xlsx/מקוטלגים: loading sheet
+    #13.2018-08-23- Havatzelet- Feminist Theory  HEB.xlsx/מקוטלגים: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-08-02- Havatzelet- ECOFEMINISM.xlsx
-    #13.2018-08-02- Havatzelet- ECOFEMINISM.xlsx/מקוטלגים: loading sheet
+    #14.2018-08-02- Havatzelet- ECOFEMINISM.xlsx/מקוטלגים: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-07-22- Ayelet - Diversity in the workplace  heb.xlsx
-    #14.2018-07-22- Ayelet - Diversity in the workplace  heb.xlsx/Sheet1: loading sheet
+    #15.2018-07-22- Ayelet - Diversity in the workplace  heb.xlsx/Sheet1: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-06-18- Havatzelet-Christian Women.xlsx
-    #15.2018-06-18- Havatzelet-Christian Women.xlsx/מקוטלגים: loading sheet
+    #16.2018-06-18- Havatzelet-Christian Women.xlsx/מקוטלגים: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-06-04- Havatzelet- Arab-Israeli conflict_WOMEN_ HEB.xlsx
-    #16.2018-06-04- Havatzelet- Arab-Israeli conflict_WOMEN_ HEB.xlsx/מקוטלגים: loading sheet
+    #17.2018-06-04- Havatzelet- Arab-Israeli conflict_WOMEN_ HEB.xlsx/מקוטלגים: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-06-07- Havatzelet -buisenesswomen HEB.xlsx
-    #17.2018-06-07- Havatzelet -buisenesswomen HEB.xlsx/מקוטלגים: loading sheet
+    #18.2018-06-07- Havatzelet -buisenesswomen HEB.xlsx/מקוטלגים: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-07-24- Talia -Discrimination in employment heb.xlsx
-    #18.2018-07-24- Talia -Discrimination in employment heb.xlsx/מקוטלגים: loading sheet
+    #19.2018-07-24- Talia -Discrimination in employment heb.xlsx/מקוטלגים: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-06-25- Ayelet -Empowerment HEB.xlsx
-    #19.2018-06-25- Ayelet -Empowerment HEB.xlsx/Sheet1: loading sheet
+    #20.2018-06-25- Ayelet -Empowerment HEB.xlsx/Sheet1: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-06-11- Havatzelet- Cleaning Contract.xlsx
-    #20.2018-06-11- Havatzelet- Cleaning Contract.xlsx/מקוטלגים: loading sheet
+    #21.2018-06-11- Havatzelet- Cleaning Contract.xlsx/מקוטלגים: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-06-07- Ayelet - Decision making WOMEN heb.xlsx
-    #21.2018-06-07- Ayelet - Decision making WOMEN heb.xlsx/Sheet1: loading sheet
+    #22.2018-06-07- Ayelet - Decision making WOMEN heb.xlsx/Sheet1: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-05-03- Talia - Abused Women ENG - modified.xlsx
-    #22.2018-05-03- Talia - Abused Women ENG - modified.xlsx/מקוטלגים: loading sheet
-    #22.2018-05-03- Talia - Abused Women ENG - modified.xlsx/Deteted Items: loading sheet
+    #23.2018-05-03- Talia - Abused Women ENG - modified.xlsx/מקוטלגים: loading sheet
+    #23.2018-05-03- Talia - Abused Women ENG - modified.xlsx/Deteted Items: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-05-24- Havatzelet- Age_and-employment.xlsx
-    #23.2018-05-24- Havatzelet- Age_and-employment.xlsx/מקוטלגים: loading sheet
+    #24.2018-05-24- Havatzelet- Age_and-employment.xlsx/מקוטלגים: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-06-07- Ayelet - CHRONIC PAIN.xlsx
-    #24.2018-06-07- Ayelet - CHRONIC PAIN.xlsx/Sheet1: loading sheet
+    #25.2018-06-07- Ayelet - CHRONIC PAIN.xlsx/Sheet1: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-06-04 - Ayelet - civil military.xlsx
-    #25.2018-06-04 - Ayelet - civil military.xlsx/Sheet1: loading sheet
+    #26.2018-06-04 - Ayelet - civil military.xlsx/Sheet1: loading sheet
         2018-06-04 - Ayelet - civil military.xlsx/Sheet1#0: missing migdar_id
         2018-06-04 - Ayelet - civil military.xlsx/Sheet1#2: missing migdar_id
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-05-01-Havatzelet-Abortion.xlsx
-    #26.2018-05-01-Havatzelet-Abortion.xlsx/מקוטלגים: loading sheet
+    #27.2018-05-01-Havatzelet-Abortion.xlsx/מקוטלגים: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-06-04- Havatzelet- Arab-Israeli conflict_WOMEN_ eng.xlsx
-    #27.2018-06-04- Havatzelet- Arab-Israeli conflict_WOMEN_ eng.xlsx/מקוטלגים: loading sheet
+    #28.2018-06-04- Havatzelet- Arab-Israeli conflict_WOMEN_ eng.xlsx/מקוטלגים: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-05-07_Work and Family-Ayelet2.xlsx
-    #28.2018-05-07_Work and Family-Ayelet2.xlsx/מקוטלגים: loading sheet
+    #29.2018-05-07_Work and Family-Ayelet2.xlsx/מקוטלגים: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-05-09- ORLY - Adoption HEB.xlsx
-    #29.2018-05-09- ORLY - Adoption HEB.xlsx/מקוטלגים: loading sheet
+    #30.2018-05-09- ORLY - Adoption HEB.xlsx/מקוטלגים: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-05-28 Havatzelet-Age_Discrimination-employment.xlsx
-    #30.2018-05-28 Havatzelet-Age_Discrimination-employment.xlsx/מקוטלגים: loading sheet
+    #31.2018-05-28 Havatzelet-Age_Discrimination-employment.xlsx/מקוטלגים: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-05-22- Havatzelet- Affirmative_HEB.xlsx
-    #31.2018-05-22- Havatzelet- Affirmative_HEB.xlsx/מקוטלגים: loading sheet
+    #32.2018-05-22- Havatzelet- Affirmative_HEB.xlsx/מקוטלגים: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-05-22- Havatzelet- Affirmative_eng.xlsx
-    #32.2018-05-22- Havatzelet- Affirmative_eng.xlsx/מקוטלגים: loading sheet
+    #33.2018-05-22- Havatzelet- Affirmative_eng.xlsx/מקוטלגים: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-05-17- Havatzelet- Abused Women HEB2.xlsx
-    #33.2018-05-17- Havatzelet- Abused Women HEB2.xlsx/מקוטלגים: loading sheet
+    #34.2018-05-17- Havatzelet- Abused Women HEB2.xlsx/מקוטלגים: loading sheet
     https://migdar-internal-search.odata.org.il/__data/search_import/2018-05-16- Havatzelet- Abused Women HEB1.xlsx
-    #34.2018-05-16- Havatzelet- Abused Women HEB1.xlsx/מקוטלגים: loading sheet
+    #35.2018-05-16- Havatzelet- Abused Women HEB1.xlsx/מקוטלגים: loading sheet
 
 
 
 <table>
 <thead>
 <tr><th>#   </th><th>title
-(string)                                                                     </th><th>pubyear
-(string)                      </th><th style="text-align: right;">      migdar_id
+(string)                                                                                                                         </th><th>pubyear
+(string)            </th><th style="text-align: right;">      migdar_id
 (string)</th></tr>
 </thead>
 <tbody>
-<tr><td>1   </td><td>לעומתיות : רישומים מתרבות הנגד של השמאל הפמיניסטי בישראל /          </td><td>2009                 </td><td style="text-align: right;">32208</td></tr>
-<tr><td>2   </td><td>"אתה השלום עכשיו שלי" : מעמד נשים והשיחים הפמיניסטיים בארגוני שמאל /</td><td>Academic Institutions</td><td style="text-align: right;">32216</td></tr>
-<tr><td>... </td><td>                                                                    </td><td>                     </td><td style="text-align: right;">     </td></tr>
-<tr><td>2043</td><td>חצויה /                                                             </td><td>2015 תשע"ה.          </td><td style="text-align: right;"> 2016</td></tr>
+<tr><td>1   </td><td>"<<ה>>חצר הנשית" : תיעוד והמשגה של פרקטיקה ביקורתית בעבודה סוציאלית עם נערות ונשים צעירות ביפו /                        </td><td>תשס"ט 2009.</td><td style="text-align: right;">38652</td></tr>
+<tr><td>2   </td><td>הבדלים בין גברים לנשים בפתרון קונפליקט ובדיאלוג חיובי בתקופת המעבר להורות : הקשר עם בריאות נפשית ושביעות רצון מהזוגיות /</td><td>2008       </td><td style="text-align: right;">38440</td></tr>
+<tr><td>... </td><td>                                                                                                                        </td><td>           </td><td style="text-align: right;">     </td></tr>
+<tr><td>2052</td><td>חצויה /                                                                                                                 </td><td>2015 תשע"ה.</td><td style="text-align: right;"> 2016</td></tr>
 </tbody>
 </table>
 
@@ -306,9 +309,9 @@ Flow(
 
 
 
-    {'count_of_rows': 2043,
-     'bytes': 2588867,
-     'hash': 'feffafe0168180ba84ef5fdc26309c3a',
+    {'count_of_rows': 2052,
+     'bytes': 2603687,
+     'hash': '323f4e7f4d752d8f1c668fac966cf706',
      'dataset_name': None}
 
 
@@ -466,6 +469,8 @@ Flow(
     #52. 4c54819e3fc9452abcf8b4e9bced5390 ( Municipal government , differences/heb)
     #53. 6c5f3f929f1542d492cad16b64c2908b ( Body image/heb)
     #54. 69228363a55d401d90d1144ce52c50b7 ( Body image, Locus of control/heb)
+    #55. 93f8323b820646778eaf296ca34f5848 ( Older women/heb)
+    #56. a43d2542b4f84c5c819a65405784bbe4 ( Older women, Labor market/heb)
 
 
 
@@ -490,3 +495,13 @@ Flow(
      'dataset_name': None}
 
 
+
+
+```python
+
+```
+
+
+```python
+
+```
