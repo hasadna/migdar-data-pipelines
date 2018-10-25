@@ -1,0 +1,27 @@
+version: '3.2'
+
+services:
+
+  db:
+    image: postgres:9.6.3-alpine
+    environment:
+      - "POSTGRES_PASSWORD=123456"
+    volumes:
+      - "db:/var/lib/postgresql/data"
+    ports:
+      - "15432:5432"
+
+  adminer:
+    depends_on:
+    - db
+    image: adminer
+    ports:
+    - "18080:8080"
+
+  elasticsearch:
+    image: budgetkey/open-budget-elasticsearch
+    ports:
+    - "19200:9200"
+
+volumes:
+  db:

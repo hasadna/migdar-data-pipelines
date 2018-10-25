@@ -1,9 +1,10 @@
 if [ "${1}" == "install" ]; then
     python3 -m pip install \
         jupyter jupyterlab ipython \
-        plyvel \
+        plyvel psycopg2 datapackage-pipelines-elasticsearch \
         'https://github.com/OriHoch/dataflows/archive/specify-encoding-for-load.zip#egg=dataflows[speedup]' \
-        'https://github.com/frictionlessdata/datapackage-pipelines/archive/2.0.0.zip#egg=datapackage-pipelines[speedup]'
+        'https://github.com/frictionlessdata/datapackage-pipelines/archive/2.0.0.zip#egg=datapackage-pipelines[speedup]' &&\
+    python3 -m pip install -e .
 
 elif [ "${1}" == "script" ]; then
     ./render_notebook.sh QUICKSTART

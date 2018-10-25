@@ -1,0 +1,37 @@
+load_publications_from_gdrive:
+  pipeline:
+  - flow: datapackage_pipelines_migdar.flows.load_publications_from_gdrive
+
+join_publications_unique_records:
+  dependencies:
+  - datapackage: data/search_import_from_gdrive/datapackage.json
+  - pipeline: ./load_publications_from_gdrive
+  pipeline:
+  - flow: datapackage_pipelines_migdar.flows.join_publications
+    parameters:
+      type: unique_records
+
+join_publications_search_app_records:
+  dependencies:
+  - datapackage: data/search_import_from_gdrive/datapackage.json
+  - pipeline: ./load_publications_from_gdrive
+  pipeline:
+  - flow: datapackage_pipelines_migdar.flows.join_publications
+    parameters:
+      type: search_app_records
+
+prepare_data_for_es:
+  dependencies:
+  - datapackage: data/unique_records_full/datapackage.json
+  - datapackage: data/app_records_full/datapackage.json
+  - pipeline: ./join_publications_unique_records
+  - pipeline: ./join_publications_search_app_records
+  pipeline:
+  - flow: datapackage_pipelines_migdar.flows.prepare_data_for_es
+
+dump_publications_to_es:
+  dependencies:
+  - datapackage: data/publications_for_es/datapackage.json
+  - pipeline: ./prepare_data_for_es
+  pipeline:
+  - flow: datapackage_pipelines_migdar.flows.dump_publications_to_es
