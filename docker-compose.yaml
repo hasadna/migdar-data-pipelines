@@ -23,5 +23,25 @@ services:
     ports:
     - "19200:9200"
 
+  pipelines:
+    depends_on:
+    - db
+    - elasticsearch
+    image: uumpa/hasadna-migdar-data-pipelines
+    command: server
+    build:
+      context: .
+    volumes:
+    - "data:/pipelines/data"
+    ports:
+    - "15000:5000"
+    environment:
+    - DPP_REDIS_HOST=127.0.0.1
+    - DATAFLOWS_DB_ENGINE=postgresql://postgres:123456@db:5432/postgres
+    - DPP_ELASTICSEARCH=elasticsearch:9200
+    - MIGDAR_USERNAME
+    - MIGDAR_PASSWORD
+
 volumes:
   db:
+  data:

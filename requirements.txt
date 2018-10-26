@@ -1,0 +1,10 @@
+plyvel
+datapackage-pipelines-elasticsearch
+
+# dataflows v0.0.32 (not released yet)
+https://github.com/datahq/dataflows/archive/232c99a44c28122cabc5f794d7b9168c2d492e97.zip#egg=dataflows[speedup]
+
+# there is a problem with dpp pip - so we have to install from github
+https://github.com/frictionlessdata/datapackage-pipelines/archive/2.0.0.zip#egg=datapackage-pipelines[speedup]
+
+gunicorn

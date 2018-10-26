@@ -7,12 +7,32 @@ if [ "${1}" == "install" ]; then
     python3 -m pip install -e .
 
 elif [ "${1}" == "script" ]; then
-    ./render_notebook.sh QUICKSTART
+    docker build -t ${DOCKER_IMAGE}:latest -t ${DOCKER_IMAGE}:${TRAVIS_COMMIT} .
+
+    # ./render_notebook.sh QUICKSTART
 
 elif [ "${1}" == "deploy" ]; then
-    travis_ci_operator.sh github-update self master "
-        cp -f $PWD/QUICKSTART.md $PWD/QUICKSTART.ipynb ./ &&\
-        git add QUICKSTART.md QUICKSTART.ipynb
-    " "update QUICKSTART notebook"
+    if [ "${TRAVIS_BRANCH}" == "master" ] &&\
+       [ "${TRAVIS_TAG}" == "" ] &&\
+       [ "${TRAVIS_PULL_REQUEST}" == "false" ]
+    then
+        docker push ${DOCKER_IMAGE}:latest &&\
+        docker push ${DOCKER_IMAGE}:${TRAVIS_COMMIT} &&\
+        travis_ci_operator.sh github-yaml-update \
+            migdar-k8s master values.auto-updated.yaml '{"migdar-data-pipelines":{"image": "'${DOCKER_IMAGE}:${TRAVIS_COMMIT}'"}}' \
+            "automatic update of migdar-data-pipelines" OriHoch/migdar-k8s &&\
+        echo &&\
+        echo Great Success &&\
+        echo &&\
+        echo ${DOCKER_IMAGE}:latest &&\
+        echo ${DOCKER_IMAGE}:${TRAVIS_COMMIT}
+    else
+        echo Skipping deployment
+    fi
+
+    # travis_ci_operator.sh github-update self master "
+    #     cp -f $PWD/QUICKSTART.md $PWD/QUICKSTART.ipynb ./ &&\
+    #     git add QUICKSTART.md QUICKSTART.ipynb
+    # " "update QUICKSTART notebook"
 
 fi

@@ -10,8 +10,3 @@ dependencies:
   - leveldb>=1.20
   - python=3.6
   - psycopg2
-  - pip:
-    - plyvel
-    - datapackage-pipelines-elasticsearch
-    - https://github.com/OriHoch/dataflows/archive/specify-encoding-for-load.zip#egg=dataflows[speedup]
-    - https://github.com/frictionlessdata/datapackage-pipelines/archive/2.0.0.zip#egg=datapackage-pipelines[speedup]

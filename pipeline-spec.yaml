@@ -1,3 +1,10 @@
+download_search_results_unique_records:
+  pipeline:
+  - run: datapackage_pipelines_migdar.flows.exec
+    parameters:
+      __exec: [bash, download_search_results_unique_records.sh]  # , "3000"]
+      __path: .
+
 load_publications_from_gdrive:
   pipeline:
   - flow: datapackage_pipelines_migdar.flows.load_publications_from_gdrive
@@ -6,7 +13,17 @@ join_publications_unique_records:
   dependencies:
   - datapackage: data/search_import_from_gdrive/datapackage.json
   - pipeline: ./load_publications_from_gdrive
+  - pipeline: ./download_search_results_unique_records
   pipeline:
+  - run: datapackage_pipelines_migdar.flows.exec
+    parameters:
+      __exec: |
+        ! [ -e data/search_results/unique_records.csv ] \
+            && echo missing dependency: data/search_results/unique_records.csv >&2 \
+            && exit 1
+        echo data/search_results/unique_records.csv: $(cat data/search_results/unique_records.csv | wc -l) rows
+        exit 0
+      __path: .
   - flow: datapackage_pipelines_migdar.flows.join_publications
     parameters:
       type: unique_records
