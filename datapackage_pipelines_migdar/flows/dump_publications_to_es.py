@@ -22,7 +22,7 @@ def flow(*args):
     all_fields = set(
         field.name
         for resource in package.resources
-        for fields in resource.schema.fields
+        for field in resource.schema.fields
     )
     all_fields = dict(
         (field_name, [])
