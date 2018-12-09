@@ -51,4 +51,7 @@ dump_publications_to_es:
   - datapackage: data/publications_for_es/datapackage.json
   - pipeline: ./prepare_data_for_es
   pipeline:
+  - run: update_package
+    parameters:
+        revision: '2018-12'
   - flow: datapackage_pipelines_migdar.flows.dump_publications_to_es
