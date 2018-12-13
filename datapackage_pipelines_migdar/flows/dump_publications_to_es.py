@@ -27,7 +27,8 @@ def split_keyword_list(fieldname):
         yield package.pkg
         for resource in package:
             yield map(lambda row: dict([*row.items(),
-                                        (new_name, list(map(strip, row.get(fieldname, '').split(','))))
+                                        (new_name, list(map(lambda s: s.strip(),
+                                                            row.get(fieldname, '').split(','))))
                                        ]),
                       resource)
     return func
