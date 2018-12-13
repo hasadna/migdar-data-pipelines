@@ -53,5 +53,5 @@ dump_publications_to_es:
   pipeline:
   - run: update_package
     parameters:
-        revision: '2018-12'
+        revision: '2018-12-13'
   - flow: datapackage_pipelines_migdar.flows.dump_publications_to_es

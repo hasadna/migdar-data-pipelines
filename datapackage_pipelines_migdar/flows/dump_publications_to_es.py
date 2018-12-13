@@ -15,6 +15,24 @@ def update_schema(package):
     yield from package
 
 
+def split_keyword_list(fieldname):
+    def func(package):
+        new_name = fieldname + '_list'
+        package.pkg.descriptor['resources'][0]['schema']['fields'].append({
+            'name': new_name,
+            'type': 'array',
+            'es:itemType': 'string',
+            'es:keyword': True
+        })
+        yield package.pkg
+        for resource in package:
+            yield map(resource, 
+                      lambda row: dict([*row.items(),
+                                        (new_name, list(map(strip, row.get(fieldname, '').split(','))))
+                                       ])
+                     )
+
+
 def flow(*args):
     is_dpp = len(args) > 3
     source_url = 'data/publications_for_es/datapackage.json'
@@ -34,6 +52,18 @@ def flow(*args):
         concatenate(all_fields, target=dict(name='publications', path='publications.csv')),
         delete_fields(['json']),
         update_schema,
+        set_type('title',        **{'es:title': True}),
+        set_type('gd_title',     **{'es:title': True}),
+        set_type('notes',        **{'es:hebrew': True}),
+        set_type('gd_notes',     **{'es:hebrew': True}),
+        set_type('publisher',    **{'es:keyword': True}),
+        set_type('gd_publisher', **{'es:keyword': True}),
+        split_keyword_list('gd_Life Domains'),
+        split_keyword_list('gd_Resource Type'),
+        split_keyword_list('gd_language_code'),
+        split_keyword_list('language_code'),
+        split_keyword_list('gd_tags'),
+        split_keyword_list('tags'),
         DumpToElasticSearch({'migdar': [{'resource-name': 'publications',
                                          'doc-type': 'publications',
                                          'revision': PUBLICATIONS_ES_REVISION}]})(),
