@@ -31,6 +31,7 @@ def split_keyword_list(fieldname):
                                         (new_name, list(map(strip, row.get(fieldname, '').split(','))))
                                        ])
                      )
+    return func
 
 
 def flow(*args):
