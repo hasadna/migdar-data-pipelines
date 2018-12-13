@@ -5,6 +5,7 @@ if [ "${1}" == "install" ]; then
     #     'https://github.com/OriHoch/dataflows/archive/specify-encoding-for-load.zip#egg=dataflows[speedup]' \
     #     'https://github.com/frictionlessdata/datapackage-pipelines/archive/2.0.0.zip#egg=datapackage-pipelines[speedup]' &&\
     # python3 -m pip install -e .
+    python3 -m pip install PyYAML
     echo installed
 
 elif [ "${1}" == "script" ]; then
