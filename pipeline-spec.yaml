@@ -44,6 +44,9 @@ prepare_data_for_es:
   - pipeline: ./join_publications_unique_records
   - pipeline: ./join_publications_search_app_records
   pipeline:
+  - run: update_package
+    parameters:
+        revision: '2018-12-13'
   - flow: datapackage_pipelines_migdar.flows.prepare_data_for_es
 
 dump_publications_to_es:
@@ -51,7 +54,4 @@ dump_publications_to_es:
   - datapackage: data/publications_for_es/datapackage.json
   - pipeline: ./prepare_data_for_es
   pipeline:
-  - run: update_package
-    parameters:
-        revision: '2018-12-13'
   - flow: datapackage_pipelines_migdar.flows.dump_publications_to_es
