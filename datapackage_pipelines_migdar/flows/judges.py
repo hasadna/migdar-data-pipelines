@@ -43,6 +43,88 @@ def parse_judges_extra_details(row):
     row['tribunal_type_name'] = tribunal_type_name
 
 
+def parse_judge_events(package):
+    package.pkg.add_resource({
+        'name': 'judge_events',
+        'path': 'judge_events.csv',
+        'schema': {
+            'fields': [
+                {'name': 'Judge_ID', 'type': 'string'},
+                {'name': 'First_Name', 'type': 'string'},
+                {'name': 'Last_Name', 'type': 'string'},
+                {'name': 'event_id', 'type': 'string'},
+                {'name': 'event_datestring', 'type': 'string'},
+                {'name': 'event_description', 'type': 'string'},
+            ]
+        }
+    })
+    yield package.pkg
+
+    events = []
+
+    def _iter_judges_list(judges):
+        for judge in judges:
+            yield judge
+            if judge['CV'] and judge['CV'].strip() != '':
+                for line in judge['CV'].splitlines():
+                    if line.strip() == '': continue
+                    splitidx = None
+                    for year in range(1900, 2050):
+                        idx = line.find(str(year))
+                        if idx > -1 and (splitidx is None or splitidx < idx):
+                            splitidx = idx
+                    event = {
+                        'Judge_ID': judge['Judge_ID'],
+                        'First_Name': judge['First_Name'],
+                        'Last_Name': judge['Last_Name'],
+                    }
+                    if splitidx:
+                        event.update(
+                            event_datestring=line[:splitidx+4].strip(),
+                            event_description=line[splitidx+4:].strip()
+                        )
+                        events.append(event)
+                    elif len(events) > 0 and events[-1]['Judge_ID'] == judge['Judge_ID']:
+                        events[-1]['event_description'] += ' ' + line.strip()
+                    else:
+                        event.update(
+                            event_datestring='',
+                            event_description=line.strip()
+                        )
+                        events.append(event)
+
+    for resource in package:
+        if resource.res.name == 'judges_list':
+            yield _iter_judges_list(resource)
+        else:
+            yield resource
+
+    for event in events:
+        for attr in ['event_datestring', 'event_description']:
+            for s in [
+                'מונה', 'נבחר לכהונת', 'נבחר לכהן', 'עבר לכהן', 'עברה לכהונ', 'מכהן',
+                'כיהן', 'התמנה',
+                'מונתה', 'נבחרה לכהונת', 'נבחרה לכהן', 'עברה לכהן', 'עברה לכהונ', 'מכהנת',
+                'כיהנה', 'התמנתה',
+            ]:
+                if s in event[attr]:
+                    event['event_id'] = 'appointment'
+            for s in [
+                'פרש לגימלה', 'פרש לגימלאות',
+                'פרשה לגימלה', 'פרשה לגימלאות'
+            ]:
+                if s in event[attr]:
+                    event['event_id'] = 'retirement'
+            for s in [
+                'נפטר',
+                'נפטרה',
+            ]:
+                if s in event[attr]:
+                    event['event_id'] = 'death'
+
+    yield (e for e in events)
+
+
 def judges_flow(out_path):
     return Flow(
         get_tribunals(),
@@ -64,6 +146,7 @@ def judges_flow(out_path):
         add_field('tribunal_type_name', 'string'),
         parse_judges_extra_details,
         checkpoint('judges_extra_details'),
+        parse_judge_events,
         dump_to_path(out_path),
         printer(num_rows=1)
     )
