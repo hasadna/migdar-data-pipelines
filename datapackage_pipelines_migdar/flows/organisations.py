@@ -139,11 +139,11 @@ def flow(*_):
                 with_='org/{entity_id}'
             )
         ]),
-        set_type('name',        **{'es:title': True}),
-        set_type('name.ar',     **{'es:title': True}),
-        set_type('name.en',     **{'es:title': True}),
+        DF.set_type('name',        **{'es:title': True}),
+        DF.set_type('name.ar',     **{'es:title': True}),
+        DF.set_type('name.en',     **{'es:title': True}),
         *[
-            set_type('gd_notes',    **{'es:itemType': 'string'})
+            DF.set_type('gd_notes',    **{'es:itemType': 'string'})
             for f in translations.keys()
             if f != '_'
         ],
@@ -154,6 +154,6 @@ def flow(*_):
         DumpToElasticSearch({'migdar': [{'resource-name': 'orgs',
                                          'doc-type': 'document',
                                          'revision': ORGS_ES_REVISION}]})(),
-        dump_to_path('data/orgs_in_es'),
-        update_resource(None, **{'dpp:streaming': True})
+        DF.dump_to_path('data/orgs_in_es'),
+        DF.update_resource(None, **{'dpp:streaming': True})
 )
