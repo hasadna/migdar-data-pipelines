@@ -111,7 +111,7 @@ headers = {
  'logo_url': ['לוגו'],
 }
 
-ORGS_ES_REVISION = 1
+ORGS_ES_REVISION = 2
 
 
 def update_pk(pk):
@@ -122,7 +122,26 @@ def update_pk(pk):
         yield from package
     return update_schema
 
-
+def collate():
+    def process(rows):
+        for row in rows:
+            value = dict(
+                (k,v) for k,v in row.items()
+                if k != 'doc_id'
+            )
+            yield dict(
+                doc_id=row['doc_id'],
+                value=value
+            )
+    def func(package):
+        package.pkg.descriptor['resources'][0]['schema']['fields'] = [
+            dict(name='doc_id', type='string'),
+            dict(name='value', type='object', **{'es:index': False})
+        ]
+        yield package.pkg
+        for res in package:
+            yield process(res)
+    return func
 
 def flow(*_):
     return DF.Flow(
@@ -146,6 +165,7 @@ def flow(*_):
         DumpToElasticSearch({'migdar': [{'resource-name': 'orgs',
                                          'doc-type': 'orgs',
                                          'revision': ORGS_ES_REVISION}]})(),
+        collate(),
         DumpToElasticSearch({'migdar': [{'resource-name': 'orgs',
                                          'doc-type': 'document',
                                          'revision': ORGS_ES_REVISION}]})(),

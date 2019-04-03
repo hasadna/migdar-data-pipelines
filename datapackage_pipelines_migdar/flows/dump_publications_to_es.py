@@ -37,6 +37,26 @@ def split_keyword_list(fieldname, delimiter=','):
                       resource)
     return func
 
+def collate():
+    def process(rows):
+        for row in rows:
+            value = dict(
+                (k,v) for k,v in row.items()
+                if k != 'doc_id'
+            )
+            yield dict(
+                doc_id=row['doc_id'],
+                value=value
+            )
+    def func(package):
+        package.pkg.descriptor['resources'][0]['schema']['fields'] = [
+            dict(name='doc_id', type='string'),
+            dict(name='value', type='object', **{'es:index': False})
+        ]
+        yield package.pkg
+        for res in package:
+            yield process(res)
+    return func
 
 def flow(*args):
     is_dpp = len(args) > 3
@@ -73,6 +93,7 @@ def flow(*args):
                                          'doc-type': 'publications',
                                          'revision': PUBLICATIONS_ES_REVISION}]})(),
         update_pk('doc_id'),
+        collate(),
         DumpToElasticSearch({'migdar': [{'resource-name': 'publications',
                                          'doc-type': 'document',
                                          'revision': PUBLICATIONS_ES_REVISION}]})(),
