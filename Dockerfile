@@ -1,4 +1,4 @@
-FROM frictionlessdata/datapackage-pipelines:2.0.0
+FROM frictionlessdata/datapackage-pipelines:latest
 
 RUN apk --update --no-cache add bash wget
 
