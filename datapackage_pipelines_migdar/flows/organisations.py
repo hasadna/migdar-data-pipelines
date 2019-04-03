@@ -73,10 +73,11 @@ def split_and_translate(field, translations):
         fields = package.pkg.descriptor['resources'][0]['schema']['fields']
         fields = list(filter(lambda x: x['name'] != field, fields))
         fields.extend([
-            dict(
-                name='{}{}'.format(field, lang),
-                type='array'
-            )
+            {
+                'name': '{}{}'.format(field, lang),
+                'type': 'array',
+                'es:itemType': 'string'
+            }
             for lang in LANGS
         ])
         package.pkg.descriptor['resources'][0]['schema']['fields'] = fields
@@ -141,11 +142,6 @@ def flow(*_):
         ]),
         DF.set_type('name',        **{'es:title': True}),
         DF.set_type('name.ar',     **{'es:title': True}),
-        *[
-            DF.set_type('{}\.[a-z]+'.format(f), **{'es:itemType': 'string'})
-            for f in translations.keys()
-            if f != '_'
-        ],
         update_pk('doc_id'),
         DumpToElasticSearch({'migdar': [{'resource-name': 'orgs',
                                          'doc-type': 'orgs',
