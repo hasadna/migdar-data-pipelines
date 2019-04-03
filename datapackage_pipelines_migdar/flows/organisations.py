@@ -87,8 +87,8 @@ def split_and_translate(field, translations):
     return func
 
 headers = {
- 'name': ['שם מלא של הארגון - לתרגום או לתעתיק'],
- 'name.ar': ['اسم الجمعيّة'],
+ 'org_name': ['שם מלא של הארגון - לתרגום או לתעתיק'],
+ 'org_name.ar': ['اسم الجمعيّة'],
  'entity_id': ['מספר עמותה'],
  'org_kind': ['סוג הארגון'],
  'tagline': ['מטרת הארגון ( משפט תיאורי קצר) - לתרגום'],
@@ -140,8 +140,8 @@ def flow(*_):
                 with_='org/{entity_id}'
             )
         ]),
-        DF.set_type('name',        **{'es:title': True}),
-        DF.set_type('name.ar',     **{'es:title': True}),
+        DF.set_type('org_name',        **{'es:title': True}),
+        DF.set_type('org_name.ar',     **{'es:title': True}),
         update_pk('doc_id'),
         DumpToElasticSearch({'migdar': [{'resource-name': 'orgs',
                                          'doc-type': 'orgs',
