@@ -1,4 +1,6 @@
 download_search_results_unique_records:
+  schedule:
+    crontab: "0 0 * * *"
   pipeline:
   - run: datapackage_pipelines_migdar.flows.exec
     parameters:
@@ -6,6 +8,8 @@ download_search_results_unique_records:
       __path: .
 
 load_publications_from_gdrive:
+  schedule:
+    crontab: "0 0 * * *"
   pipeline:
   - flow: datapackage_pipelines_migdar.flows.load_publications_from_gdrive
 
