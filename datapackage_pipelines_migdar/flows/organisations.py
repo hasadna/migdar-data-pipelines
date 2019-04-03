@@ -141,9 +141,8 @@ def flow(*_):
         ]),
         DF.set_type('name',        **{'es:title': True}),
         DF.set_type('name.ar',     **{'es:title': True}),
-        DF.set_type('name.en',     **{'es:title': True}),
         *[
-            DF.set_type('gd_notes',    **{'es:itemType': 'string'})
+            DF.set_type('{}\.[a-z]+'.format(f), **{'es:itemType': 'string'})
             for f in translations.keys()
             if f != '_'
         ],
