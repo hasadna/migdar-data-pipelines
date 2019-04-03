@@ -59,3 +59,9 @@ dump_publications_to_es:
   - pipeline: ./prepare_data_for_es
   pipeline:
   - flow: datapackage_pipelines_migdar.flows.dump_publications_to_es
+
+
+organisations:
+  pipeline:
+  - flow: datapackage_pipelines_migdar.flows.organisations
+  
