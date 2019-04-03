@@ -143,7 +143,7 @@ def flow(*_):
         set_type('name.ar',     **{'es:title': True}),
         set_type('name.en',     **{'es:title': True}),
         *[
-            set_type('gd_notes',    **{'es:itemType': 'string'}),
+            set_type('gd_notes',    **{'es:itemType': 'string'})
             for f in translations.keys()
             if f != '_'
         ],
