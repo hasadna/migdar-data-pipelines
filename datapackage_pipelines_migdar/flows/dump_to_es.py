@@ -122,3 +122,51 @@ class DumpToElasticSearch(ESDumper):
                         doc_type=doc_type
                     )
                     logging.info('GOT %r', ret)
+
+
+def update_pk(pk):
+    def update_schema(package):
+        for resource in package.pkg.descriptor['resources']:
+            resource['schema']['primaryKey'] = [pk]
+        yield package.pkg
+        yield from package
+    return update_schema
+
+
+def collate():
+    def process(rows):
+        for row in rows:
+            value = dict(
+                (k,v) for k,v in row.items()
+                if k != 'doc_id'
+            )
+            yield dict(
+                doc_id=row['doc_id'],
+                score=1,
+                value=value
+            )
+    def func(package):
+        package.pkg.descriptor['resources'][0]['schema']['fields'] = [
+            dict(name='doc_id', type='string'),
+            dict(name='score', type='number'),
+            dict(name='value', type='object', **{'es:index': False})
+        ]
+        yield package.pkg
+        for res in package:
+            yield process(res)
+    return func
+
+
+def es_dumper(resource_name, revision, path):
+    return Flow(
+        update_pk('doc_id'),
+        DumpToElasticSearch({'migdar': [{'resource-name': resource_name,
+                                         'doc-type': resource_name,
+                                         'revision': revision}]})(),
+        DF.dump_to_path('data/{}'.format(path)),
+        collate(),
+        DumpToElasticSearch({'migdar': [{'resource-name': resource_name,
+                                         'doc-type': 'document',
+                                         'revision': revision}]})(),
+        DF.update_resource(None, **{'dpp:streaming': True})
+    )
