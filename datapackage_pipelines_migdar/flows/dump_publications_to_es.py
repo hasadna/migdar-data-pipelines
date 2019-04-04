@@ -58,6 +58,6 @@ def flow(*args):
         split_keyword_list('language_code', ' '),
         split_keyword_list('gd_tags'),
         split_keyword_list('tags'),
-        es_dumper('publications', PUBLICATIONS_ES_REVISION, 'published_in_es')
-        printer(tablefmt='plain' if is_dpp else 'html', num_rows=1, fields=['doc_id']),
+        es_dumper('publications', PUBLICATIONS_ES_REVISION, 'published_in_es'),
+        printer(tablefmt='plain' if is_dpp else 'html', num_rows=1, fields=['doc_id'])
     )

@@ -1,5 +1,6 @@
 from datapackage_pipelines_elasticsearch.processors.dump.to_index import ESDumper
 from tableschema_elasticsearch.mappers import MappingGenerator
+import dataflows as DF
 
 import logging
 import collections
