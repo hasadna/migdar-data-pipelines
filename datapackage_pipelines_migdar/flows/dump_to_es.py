@@ -159,7 +159,7 @@ def collate():
 
 
 def es_dumper(resource_name, revision, path):
-    return Flow(
+    return DF.Flow(
         update_pk('doc_id'),
         DumpToElasticSearch({'migdar': [{'resource-name': resource_name,
                                          'doc-type': resource_name,

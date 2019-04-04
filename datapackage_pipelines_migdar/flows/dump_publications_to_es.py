@@ -45,7 +45,6 @@ def flow(*args):
         lambda row: dict(row, json='{}'),
         concatenate(all_fields, target=dict(name='publications', path='publications.csv')),
         delete_fields(['json']),
-        update_pk('migdar_id'),
         set_type('title',        **{'es:title': True}),
         set_type('gd_title',     **{'es:title': True}),
         set_type('notes',        **{'es:hebrew': True}),
