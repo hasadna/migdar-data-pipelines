@@ -165,10 +165,10 @@ def flow(*_):
         DumpToElasticSearch({'migdar': [{'resource-name': 'orgs',
                                          'doc-type': 'orgs',
                                          'revision': ORGS_ES_REVISION}]})(),
+        DF.dump_to_path('data/orgs_in_es'),
         collate(),
         DumpToElasticSearch({'migdar': [{'resource-name': 'orgs',
                                          'doc-type': 'document',
                                          'revision': ORGS_ES_REVISION}]})(),
-        DF.dump_to_path('data/orgs_in_es'),
         DF.update_resource(None, **{'dpp:streaming': True})
 )

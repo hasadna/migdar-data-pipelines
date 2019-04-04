@@ -93,11 +93,11 @@ def flow(*args):
                                          'doc-type': 'publications',
                                          'revision': PUBLICATIONS_ES_REVISION}]})(),
         update_pk('doc_id'),
+        dump_to_path('data/published_in_es'),
         collate(),
         DumpToElasticSearch({'migdar': [{'resource-name': 'publications',
                                          'doc-type': 'document',
                                          'revision': PUBLICATIONS_ES_REVISION}]})(),
         printer(tablefmt='plain' if is_dpp else 'html', num_rows=1, fields=['doc_id']),
-        dump_to_path('data/published_in_es'),
         update_resource(None, **{'dpp:streaming': True})
     )
