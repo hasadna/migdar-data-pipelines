@@ -32,11 +32,11 @@ for line in legend:
     else:
         current = None
 
-LANGS = ['', '.en', '.ar']
+LANGS = ['', '__en', '__ar']
 def split_and_translate(field, translations):
     res = DF.Flow(translations, 
                   DF.concatenate({
-                    'value': ['col0'], '': ['col1'], '.ar': ['col2'], '.en': ['col3']
+                    'value': ['col0'], '': ['col1'], '__ar': ['col2'], '__en': ['col3']
                   })
                  ).results()
     translations = res[0][0]
@@ -88,13 +88,13 @@ def split_and_translate(field, translations):
 
 headers = {
  'org_name': ['שם מלא של הארגון - לתרגום או לתעתיק'],
- 'org_name.ar': ['اسم الجمعيّة'],
+ 'org_name__ar': ['اسم الجمعيّة'],
  'entity_id': ['מספר עמותה'],
  'org_kind': ['סוג הארגון'],
  'tagline': ['מטרת הארגון ( משפט תיאורי קצר) - לתרגום'],
- 'tagline.ar': ['מטרת הארגון בתרגום לערבית'],
+ 'tagline__ar': ['מטרת הארגון בתרגום לערבית'],
  'objective': ['על הארגון, פעילויות עיקריות ומטרות - לתרגום'],
- 'objective.ar': ['על הארגון, פעילויות עיקריות ומטרות - תרגום לערבית'],
+ 'objective__ar': ['על הארגון, פעילויות עיקריות ומטרות - תרגום לערבית'],
  'life_areas': ['תחומי חיים'],
  'languages': ['שפות בהן ניתנים שירותים'],
  'specialties': ['תחומי פעילות והתמחות עיקריים'],
@@ -111,7 +111,7 @@ headers = {
  'logo_url': ['לוגו'],
 }
 
-ORGS_ES_REVISION = 2
+ORGS_ES_REVISION = 3
 
 
 def update_pk(pk):
@@ -160,7 +160,7 @@ def flow(*_):
             )
         ]),
         DF.set_type('org_name',        **{'es:title': True}),
-        DF.set_type('org_name.ar',     **{'es:title': True}),
+        DF.set_type('org_name__ar',     **{'es:title': True}),
         update_pk('doc_id'),
         DumpToElasticSearch({'migdar': [{'resource-name': 'orgs',
                                          'doc-type': 'orgs',
