@@ -14,7 +14,7 @@ from datapackage_pipelines_migdar.flows.common import DATAFLOWS_DB_ENGINE
 
 
 DB_TABLE = constants.PUBLICATIONS_DB_TABLE
-REVISION = constants.PUBLICATIONS_ES_REVISION
+PUBLICATIONS_ES_REVISION = 18
 KEY_FIELDS = ['migdar_id']
 HASH_FIELDS = None
 FILTER_NEXT_UPDATE_DAYS = None
@@ -223,7 +223,7 @@ def flow(*args):
     return Flow(
         load('data/unique_records_full/datapackage.json', resources=['unique_records']),
         load('data/app_records_full/datapackage.json', resources=['search_app_records']),
-        add_field('__revision', 'integer', REVISION),
+        add_field('__revision', 'integer', PUBLICATIONS_ES_REVISION),
         *(add_field(f['name'], f['type']) for f in STATUS_FIELDS),
         manage_revisions,
         *(dump_to_sql({DB_TABLE: {'resource-name': resource_name,

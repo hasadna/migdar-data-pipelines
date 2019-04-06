@@ -1,7 +1,7 @@
 from datapackage import Package
 from dataflows import Flow, load, printer, set_type, update_resource, concatenate, dump_to_path, delete_fields, add_field
 from datapackage_pipelines_migdar.flows.dump_to_es import es_dumper
-from datapackage_pipelines_migdar.flows.constants import PUBLICATIONS_ES_REVISION
+from datapackage_pipelines_migdar.flows.prepare_data_for_es import PUBLICATIONS_ES_REVISION
 
 
 def split_keyword_list(new_fieldname, fieldname, delimiter=','):
@@ -32,6 +32,7 @@ def prefer_gd(field_name):
     return Flow(
         func, delete_fields(['gd_{}'.format(field_name)])
     )
+
 
 def main_flow(prefix=''):
     source_url = '{}data/publications_for_es/datapackage.json'.format(prefix)
