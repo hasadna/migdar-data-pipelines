@@ -216,12 +216,14 @@ dataets_flow = DF.Flow(*[
                 'es:index': False
             }
         ),
-        operation=lambda row: dict(
-            (k, row[k][i])
+        operation=lambda row: [
+            dict(
+                (k, row[k][i])
+                for k in SERIES_FIELDS + ['dataset']
+                if len(row[k]) == row['num_datasets']
+            )
             for i in range(row['num_datasets'])
-            for k in SERIES_FIELDS + ['dataset']
-            if len(row[k]) == row['num_datasets']
-        )
+        ]
     ),
     DF.delete_fields(SERIES_FIELDS + ['dataset']),
     DF.add_computed_field(
@@ -239,6 +241,7 @@ dataets_flow = DF.Flow(*[
             'chart_title', 'chart_title__ar'
         ]
     ],
+    DF.validate(),
     DF.update_resource(resources=None,name='datasets'),
 )
 
