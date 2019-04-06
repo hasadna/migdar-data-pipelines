@@ -111,24 +111,41 @@ headers = {
 
 ORGS_ES_REVISION = 3
 
+org_flow = DF.Flow(
+    DF.load(ORGS_URL, name='orgs'), 
+    DF.concatenate(headers, resources='orgs', target=dict(name='orgs')),
+    *[
+        split_and_translate(f, translations[f])
+        for f in translations.keys()
+        if f != '_'
+    ],
+    DF.add_computed_field(
+        target='doc_id',
+        operation='format',
+        with_='org/{entity_id}'
+    ),
+    DF.set_type('org_name',        **{'es:title': True}),
+    DF.set_type('org_name__ar',    **{'es:title': True}),
+    *[
+        DF.set_type(f, **{'es:keyword': True})
+        for f in [
+            'org_kind', 'life_areas', 'languages', 'tags', 
+        ]
+    ],
+    *[
+        DF.set_type(f, **{'es:index': False})
+        for f in [
+            'org_website', 'org_facebook', 'org_phone_number', 'org_email_address', 'logo_url'
+        ]
+    ],
+    DF.validate(),
+)
 
 def flow(*_):
     return DF.Flow(
-        DF.load(ORGS_URL, name='orgs'), 
-        DF.concatenate(headers, resources='orgs', target=dict(name='orgs')),
-        *[
-            split_and_translate(f, translations[f])
-            for f in translations.keys()
-            if f != '_'
-        ],
-        DF.add_computed_field([
-            dict(
-                target='doc_id',
-                operation='format',
-                with_='org/{entity_id}'
-            )
-        ]),
-        DF.set_type('org_name',        **{'es:title': True}),
-        DF.set_type('org_name__ar',     **{'es:title': True}),
+        org_flow,
         es_dumper('orgs', ORGS_ES_REVISION, 'orgs_in_es')
-)
+    )
+
+if __name__ == '__main__':
+    DF.Flow(org_flow, DF.printer()).process()
