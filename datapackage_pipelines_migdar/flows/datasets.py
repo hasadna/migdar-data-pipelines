@@ -3,6 +3,7 @@
 import tabulator
 import dataflows as DF
 from hashlib import md5
+from decimal import Decimal
 from datapackage_pipelines_migdar.flows.dump_to_es import es_dumper
 
 URLS = [
@@ -76,6 +77,9 @@ def extrapulate_years(row):
         out = [str(x) for x in sorted(out)]
     row['extrapulation_years'] = out
 
+def decimals_to_floats(row):
+    row['value'] = float(row['value']) if isinstance(row.get('value'), Decimal) else row.get('value')
+
 CHART_FIELDS = [
     'kind', 'gender_index_dimension', 'life_areas', 'author', 'institution', 'item_type', 'tags', 'language',
     'chart_title', 'chart_title__ar', 'chart_abstract', 'chart_abstract__ar',    
@@ -140,6 +144,7 @@ dataets_flow = DF.Flow(*[
     set_defaults,
     extrapulate_years,
     DF.set_type('value', groupChar=',', bareNumber=False),
+    decimals_to_floats,
     DF.set_type('extrapulation_years', type='array', **{'es:itemType': 'string'}),
     DF.validate(),
     DF.add_computed_field([
