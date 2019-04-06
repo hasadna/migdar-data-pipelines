@@ -251,7 +251,7 @@ DATASETS_ES_REVISION = 4
 def flow(*_):
     return DF.Flow(
         dataets_flow,
-        es_dumper('orgs', DATASETS_ES_REVISION, 'datasets_in_es')
+        es_dumper('datasets', DATASETS_ES_REVISION, 'datasets_in_es')
 )
 
 
