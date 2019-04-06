@@ -89,7 +89,6 @@ dataets_flow = DF.Flow(*[
         transpose(sheet)
         for sheet in sheets
     ],
-    DF.checkpoint('stats'),
     DF.unpivot(
         [{'name': '([0-9/]+)', 'keys': {'year': '\\1'}}],
         [{'name': 'year', 'type': 'string'}],
