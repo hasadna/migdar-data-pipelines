@@ -3,8 +3,6 @@ import dataflows as DF
 import tabulator
 from datapackage_pipelines_migdar.flows.dump_to_es import es_dumper
 
-os.environ.setdefault('DPP_ELASTICSEARCH', 'localhost:19200')
-
 ORGS_URL='https://docs.google.com/spreadsheets/d/1fWHl6rlvpqfCXoM1IVhqlY0SWQ_IYCWukuyCcTDwWjM/view'
 LEGEND_URL='https://docs.google.com/spreadsheets/d/1fWHl6rlvpqfCXoM1IVhqlY0SWQ_IYCWukuyCcTDwWjM/edit#gid=1243311724'
 

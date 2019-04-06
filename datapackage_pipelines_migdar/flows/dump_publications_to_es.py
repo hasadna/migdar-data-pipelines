@@ -2,10 +2,7 @@ from datapackage import Package
 from dataflows import Flow, load, printer, set_type, update_resource, concatenate, dump_to_path, delete_fields
 from datapackage_pipelines_migdar.flows.dump_to_es import es_dumper
 from datapackage_pipelines_migdar.flows.constants import PUBLICATIONS_ES_REVISION
-import os
 
-
-os.environ.setdefault('DPP_ELASTICSEARCH', 'localhost:19200')
 
 def split_keyword_list(fieldname, delimiter=','):
     def func(package):

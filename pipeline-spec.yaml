@@ -65,3 +65,8 @@ organisations:
   pipeline:
   - flow: datapackage_pipelines_migdar.flows.organisations
   
+
+datasets:
+  pipeline:
+  - flow: datapackage_pipelines_migdar.flows.datasets
+  
