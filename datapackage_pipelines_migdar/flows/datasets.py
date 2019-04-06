@@ -152,7 +152,7 @@ dataets_flow = DF.Flow(*[
                     'es:keyword': True
                 }
              ),
-             operation=lambda row: row['tags_str'].split(',') if row.get('tags_str') else []
+             operation=lambda row: [x.strip() for x in row['tags_str'].split(',')] if row.get('tags_str') else []
             )
     ]),
     DF.delete_fields(['tags_str']),

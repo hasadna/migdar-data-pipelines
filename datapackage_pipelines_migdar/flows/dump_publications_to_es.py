@@ -55,6 +55,7 @@ def main_flow(prefix=''):
         prefer_gd('publisher'),
         prefer_gd('tags'),
         prefer_gd('language_code'),
+        prefer_gd('pubyear'),
         set_type('title',        **{'es:title': True}),
         set_type('notes',        **{'es:hebrew': True}),
         set_type('publisher',    **{'es:keyword': True}),
