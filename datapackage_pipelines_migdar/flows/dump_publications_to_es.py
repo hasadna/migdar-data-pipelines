@@ -66,7 +66,7 @@ def main_flow(prefix=''):
         split_keyword_list('resource_type', 'gd_Resource Type'),
         split_keyword_list('languages', 'language_code', ' '),
         split_keyword_list('tags', 'tags'),
-        split_and_translate('tags', load_tags(), keyword=True)
+        split_and_translate('tags', load_tags(), keyword=True),
         printer()
     )
 
