@@ -220,7 +220,7 @@ datasets_flow = DF.Flow(*[
     DF.delete_fields(SERIES_FIELDS + ['dataset']),
     DF.add_computed_field(
         target=dict(name='doc_id', type='string'),
-        operation=lambda row: md5(row['chart_title'].encode('utf8')).hexdigest()[:16]
+        operation=lambda row: 'dataset/' + md5(row['chart_title'].encode('utf8')).hexdigest()[:16]
     ),
     *[
         DF.set_type(f, **{'es:keyword': True})
