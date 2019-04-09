@@ -5,6 +5,7 @@ import dataflows as DF
 from hashlib import md5
 from decimal import Decimal
 from datapackage_pipelines_migdar.flows.dump_to_es import es_dumper
+from datapackage_pipelines_migdar.flows.i18n import load_tags, split_and_translate
 
 URLS = [
     ['https://docs.google.com/spreadsheets/d/1uDZ-aPGie30IHaCqJOYgERl9hyVCKDm62TrBgkF3jgo/view#gid=',
@@ -37,6 +38,8 @@ URLS = [
      ]        
     ]
 ]
+
+tags_translations = load_tags()
 
 sheets = [base + gid for base, gids in URLS for gid in gids]
 all_headers = set()
@@ -78,7 +81,7 @@ def extrapulate_years(row):
     row['extrapulation_years'] = out
 
 CHART_FIELDS = [
-    'kind', 'gender_index_dimension', 'life_areas', 'author', 'institution', 'item_type', 'tags', 'language',
+    'kind', 'gender_index_dimension', 'life_areas', 'author', 'institution', 'item_type', 'tags', 'tags__ar', 'tags__en', 'language',
     'chart_title', 'chart_title__ar', 'chart_abstract', 'chart_abstract__ar',    
 ]
 SERIES_FIELDS = [
@@ -86,7 +89,7 @@ SERIES_FIELDS = [
     'source_description', 'source_detail_description', 'gender', 'extrapulation_years', 'source_url', 'units',
 ]
 
-dataets_flow = DF.Flow(*[
+datasets_flow = DF.Flow(*[
         transpose(sheet)
         for sheet in sheets
     ],
@@ -104,7 +107,7 @@ dataets_flow = DF.Flow(*[
         author=['Author'],
         institution=['Institution'],
         item_type=['Item type'],
-        tags_str=['Tags'],
+        tags=['Tags'],
         language=[],
         chart_title=['כותרת התרשים (נשים וגברים ביחד):', ],
         chart_title__ar=['כותרת התרשים בערבית'],
@@ -143,19 +146,7 @@ dataets_flow = DF.Flow(*[
     DF.set_type('value', groupChar=',', bareNumber=False),
     DF.set_type('extrapulation_years', type='array', **{'es:itemType': 'string'}),
     DF.validate(),
-    DF.add_computed_field([
-        dict(target=dict(
-                name='tags',
-                type='array',
-                **{
-                    'es:itemType': 'string',
-                    'es:keyword': True
-                }
-             ),
-             operation=lambda row: [x.strip() for x in row['tags_str'].split(',')] if row.get('tags_str') else []
-            )
-    ]),
-    DF.delete_fields(['tags_str']),
+    split_and_translate('tags', tags_translations),
     DF.add_computed_field([
         dict(target=dict(
                 name='life_areas',
@@ -250,8 +241,10 @@ DATASETS_ES_REVISION = 5
 
 def flow(*_):
     return DF.Flow(
-        dataets_flow,
+        datasets_flow,
         es_dumper('datasets', DATASETS_ES_REVISION, 'datasets_in_es')
 )
 
 
+if __name__ == '__main__':
+    DF.Flow(datasets_flow, DF.printer()).process()

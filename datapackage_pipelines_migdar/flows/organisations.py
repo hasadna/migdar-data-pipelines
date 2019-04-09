@@ -2,6 +2,7 @@ import os
 import dataflows as DF
 import tabulator
 from datapackage_pipelines_migdar.flows.dump_to_es import es_dumper
+from datapackage_pipelines_migdar.flows.i18n import load_tags, split_and_translate
 
 ORGS_URL='https://docs.google.com/spreadsheets/d/1fWHl6rlvpqfCXoM1IVhqlY0SWQ_IYCWukuyCcTDwWjM/view'
 LEGEND_URL='https://docs.google.com/spreadsheets/d/1fWHl6rlvpqfCXoM1IVhqlY0SWQ_IYCWukuyCcTDwWjM/edit#gid=1243311724'
@@ -16,6 +17,7 @@ translations_order = [
     'specialties',
     'provided_services',
     'target_audiences',
+    'tags',
     '_'
 ]
 translations = {}
@@ -29,60 +31,8 @@ for line in legend:
             translations[current].append(line)
     else:
         current = None
+translations['tags'] = load_tags()
 
-LANGS = ['', '__en', '__ar']
-def split_and_translate(field, translations):
-    res = DF.Flow(translations, 
-                  DF.concatenate({
-                    'value': ['col0'], '': ['col1'], '__ar': ['col2'], '__en': ['col3']
-                  })
-                 ).results()
-    translations = res[0][0]
-    complained = set()
-    
-    def process(rows):
-        for row in rows:
-            vals = row.pop(field)
-            vals = vals.split(',')
-            for lang in LANGS:
-                row['{}{}'.format(field, lang)] = []
-            for val in vals:
-                val = val.strip()
-                translation = None
-                for t in translations:
-                    if t['value'].strip() == val:
-                        translation = t
-                        break
-                if translation is None:
-                    if val not in complained:
-                        print('failed to find value for {}: {}'.format(field, val))
-                        complained.add(val)
-                    for lang in LANGS:
-                        row['{}{}'.format(field, lang)].append(val)
-                else:
-                    for lang in LANGS:
-                        if translation[lang] is not None and translation[lang].strip():
-                            row['{}{}'.format(field, lang)].append(translation[lang])
-                        else:
-                            row['{}{}'.format(field, lang)].append(val)
-            yield row
-    
-    def func(package):
-        fields = package.pkg.descriptor['resources'][0]['schema']['fields']
-        fields = list(filter(lambda x: x['name'] != field, fields))
-        fields.extend([
-            {
-                'name': '{}{}'.format(field, lang),
-                'type': 'array',
-                'es:itemType': 'string'
-            }
-            for lang in LANGS
-        ])
-        package.pkg.descriptor['resources'][0]['schema']['fields'] = fields
-        yield package.pkg
-        for res in package:
-            yield process(res)
-    return func
 
 headers = {
  'org_name': ['שם מלא של הארגון - לתרגום או לתעתיק'],
@@ -136,6 +86,7 @@ org_flow = DF.Flow(
         DF.set_type(f, **{'es:index': False})
         for f in [
             'org_website', 'org_facebook', 'org_phone_number', 'org_email_address', 'logo_url'
+
         ]
     ],
     DF.validate(),
