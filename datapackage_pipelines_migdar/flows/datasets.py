@@ -224,7 +224,7 @@ datasets_flow = DF.Flow(*[
     ),
     *[
         DF.set_type(f, **{'es:keyword': True})
-        for f in ['item_type', 'kind', 'language']
+        for f in ['item_type', 'kind', 'language', 'tags']
     ],
     DF.set_primary_key(['doc_id']),
     *[

@@ -3,6 +3,7 @@ import dataflows as DF
 
 TAGS_URL='https://docs.google.com/spreadsheets/d/1tuGksHCNh8GPPtG7YjgInNtT55Oob_KQGJ6r2kNEmNk/view#gid=808755978'
 
+
 def load_tags():
     tags = list(tabulator.Stream(TAGS_URL).open().iter())
     return [
@@ -14,6 +15,7 @@ def load_tags():
         for x in tags[1:]
         if all(x[:2])
     ]
+
 
 LANGS = ['', '__en', '__ar']
 def split_and_translate(field, translations):

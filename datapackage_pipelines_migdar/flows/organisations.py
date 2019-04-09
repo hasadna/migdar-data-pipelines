@@ -79,7 +79,7 @@ org_flow = DF.Flow(
     *[
         DF.set_type(f, **{'es:keyword': True})
         for f in [
-            'org_kind', 'life_areas', 'languages', 'tags', 
+            'org_kind', 'life_areas', 'languages', 'tags'
         ]
     ],
     *[
