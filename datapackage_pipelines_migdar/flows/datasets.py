@@ -146,7 +146,7 @@ datasets_flow = DF.Flow(*[
     DF.set_type('value', groupChar=',', bareNumber=False),
     DF.set_type('extrapulation_years', type='array', **{'es:itemType': 'string'}),
     DF.validate(),
-    split_and_translate('tags', tags_translations),
+    split_and_translate('tags', tags_translations, keyword=True),
     DF.add_computed_field([
         dict(target=dict(
                 name='life_areas',
@@ -224,7 +224,7 @@ datasets_flow = DF.Flow(*[
     ),
     *[
         DF.set_type(f, **{'es:keyword': True})
-        for f in ['item_type', 'kind', 'language', 'tags']
+        for f in ['item_type', 'kind', 'language']
     ],
     DF.set_primary_key(['doc_id']),
     *[

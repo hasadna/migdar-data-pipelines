@@ -18,7 +18,7 @@ def load_tags():
 
 
 LANGS = ['', '__en', '__ar']
-def split_and_translate(field, translations):
+def split_and_translate(field, translations, keyword=False):
     res = DF.Flow(translations, 
                   DF.concatenate({
                     'value': ['col0'], '': ['col1'], '__ar': ['col2'], '__en': ['col3']
@@ -26,11 +26,12 @@ def split_and_translate(field, translations):
                  ).results()
     translations = res[0][0]
     complained = set()
-    
+
     def process(rows):
         for row in rows:
             vals = row.pop(field) or ''
-            vals = vals.split(',')
+            if isinstance(vals, str):
+                vals = vals.split(',')
             for lang in LANGS:
                 row['{}{}'.format(field, lang)] = []
             for val in vals:
@@ -63,7 +64,8 @@ def split_and_translate(field, translations):
             {
                 'name': '{}{}'.format(field, lang),
                 'type': 'array',
-                'es:itemType': 'string'
+                'es:itemType': 'string',
+                'es:keyword': keyword,
             }
             for lang in LANGS
         ])

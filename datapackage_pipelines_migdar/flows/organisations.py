@@ -65,7 +65,10 @@ org_flow = DF.Flow(
     DF.load(ORGS_URL, name='orgs'), 
     DF.concatenate(headers, resources='orgs', target=dict(name='orgs')),
     *[
-        split_and_translate(f, translations[f])
+        split_and_translate(
+            f, translations[f],
+            keyword=f in ('org_kind', 'life_areas', 'languages', 'tags')
+        )
         for f in translations.keys()
         if f != '_'
     ],
@@ -77,15 +80,10 @@ org_flow = DF.Flow(
     DF.set_type('org_name',        **{'es:title': True}),
     DF.set_type('org_name__ar',    **{'es:title': True}),
     *[
-        DF.set_type(f, **{'es:keyword': True})
-        for f in [
-            'org_kind', 'life_areas', 'languages', 'tags'
-        ]
-    ],
-    *[
         DF.set_type(f, **{'es:index': False})
         for f in [
-            'org_website', 'org_facebook', 'org_phone_number', 'org_email_address', 'logo_url'
+            'org_website', 'org_facebook', 'org_phone_number',
+            'org_email_address', 'logo_url'
 
         ]
     ],
