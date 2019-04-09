@@ -14,7 +14,7 @@ from datapackage_pipelines_migdar.flows.common import DATAFLOWS_DB_ENGINE
 
 
 DB_TABLE = constants.PUBLICATIONS_DB_TABLE
-PUBLICATIONS_ES_REVISION = 18
+PUBLICATIONS_ES_REVISION = 19
 KEY_FIELDS = ['migdar_id']
 HASH_FIELDS = None
 FILTER_NEXT_UPDATE_DAYS = None
