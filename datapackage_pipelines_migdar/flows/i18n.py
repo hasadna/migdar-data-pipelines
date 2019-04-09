@@ -33,6 +33,8 @@ def split_and_translate(field, translations):
                 row['{}{}'.format(field, lang)] = []
             for val in vals:
                 val_ = val.strip().lower()
+                if not val_:
+                    continue
                 translation = None
                 for t in translations:
                     if t['value'] == val_:
@@ -51,7 +53,7 @@ def split_and_translate(field, translations):
                         else:
                             row['{}{}'.format(field, lang)].append(val)
             yield row
-    
+
     def func(package):
         fields = package.pkg.descriptor['resources'][0]['schema']['fields']
         fields = list(filter(lambda x: x['name'] != field, fields))
