@@ -62,11 +62,15 @@ dump_publications_to_es:
 
 
 organisations:
+  schedule:
+    crontab: "0 0 * * *"
   pipeline:
   - flow: datapackage_pipelines_migdar.flows.organisations
   
 
 datasets:
+  schedule:
+    crontab: "0 0 * * *"
   pipeline:
   - flow: datapackage_pipelines_migdar.flows.datasets
   
