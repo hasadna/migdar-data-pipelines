@@ -2,7 +2,8 @@ import os
 import dataflows as DF
 import tabulator
 from datapackage_pipelines_migdar.flows.dump_to_es import es_dumper
-from datapackage_pipelines_migdar.flows.i18n import load_tags, split_and_translate
+from datapackage_pipelines_migdar.flows.i18n import \
+    load_tags, split_and_translate, clean
 
 ORGS_URL='https://docs.google.com/spreadsheets/d/1fWHl6rlvpqfCXoM1IVhqlY0SWQ_IYCWukuyCcTDwWjM/view'
 LEGEND_URL='https://docs.google.com/spreadsheets/d/1fWHl6rlvpqfCXoM1IVhqlY0SWQ_IYCWukuyCcTDwWjM/edit#gid=1243311724'
@@ -28,7 +29,7 @@ for line in legend:
             current = translations_order.pop(0)
             translations[current] = []
         else:
-            line[0] = line[0].lower().strip()
+            line[0] = clean(line[0])
             translations[current].append(line)
     else:
         current = None

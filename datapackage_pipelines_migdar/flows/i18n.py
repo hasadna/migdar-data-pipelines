@@ -4,14 +4,18 @@ import dataflows as DF
 TAGS_URL='https://docs.google.com/spreadsheets/d/1tuGksHCNh8GPPtG7YjgInNtT55Oob_KQGJ6r2kNEmNk/view#gid=808755978'
 
 
+def clean(x):
+    return x.replace('\xa0', ' ').strip().lower()
+
+
 def load_tags():
     tags = list(tabulator.Stream(TAGS_URL).open().iter())
     return [
-        [x[1].strip().lower(), x[1], x[2] or x[3], x[0]]
+        [clean(x[1]), x[1], x[2] or x[3], x[0]]
         for x in tags[1:]
         if all(x[:2])
     ] + [
-        [x[0].strip().lower(), x[1], x[2] or x[3], x[0]]
+        [clean(x[0]), x[1], x[2] or x[3], x[0]]
         for x in tags[1:]
         if all(x[:2])
     ]
@@ -35,7 +39,7 @@ def split_and_translate(field, translations, keyword=False):
             for lang in LANGS:
                 row['{}{}'.format(field, lang)] = []
             for val in vals:
-                val_ = val.strip().lower()
+                val_ = clean(val)
                 if not val_:
                     continue
                 translation = None
@@ -51,8 +55,13 @@ def split_and_translate(field, translations, keyword=False):
                         row['{}{}'.format(field, lang)].append(val)
                 else:
                     for lang in LANGS:
-                        if translation[lang] is not None and translation[lang].strip():
-                            row['{}{}'.format(field, lang)].append(translation[lang])
+                        to_val = translation[lang]
+                        if to_val is not None:
+                            to_val = clean(to_val)
+                            if to_val:
+                                row['{}{}'.format(field, lang)].append(to_val)
+                            else:
+                                row['{}{}'.format(field, lang)].append(val)
                         else:
                             row['{}{}'.format(field, lang)].append(val)
             yield row
