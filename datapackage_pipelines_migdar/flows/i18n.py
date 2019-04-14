@@ -44,9 +44,9 @@ def split_and_translate(field, translations, keyword=False):
                         translation = t
                         break
                 if translation is None:
-                    if val not in complained:
-                        print('failed to find value for {}: {}'.format(field, val))
-                        complained.add(val)
+                    if val_ not in complained:
+                        print('failed to find value for {}: {!r}'.format(field, val_))
+                        complained.add(val_)
                     for lang in LANGS:
                         row['{}{}'.format(field, lang)].append(val)
                 else:

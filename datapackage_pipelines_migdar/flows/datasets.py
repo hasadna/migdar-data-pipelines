@@ -188,17 +188,17 @@ datasets_flow = DF.Flow(*[
     ]),
     DF.delete_fields(['year', 'value', 'extrapulation_years']),
     DF.join_self('out', ['chart_title'], 'out',
-        dict([
-                (k, None)
-                for k in CHART_FIELDS
-             ] + [
-                (k, dict(aggregate='array'))
-                for k in SERIES_FIELDS + ['dataset']
-             ] + [
-                ('num_datasets', dict(aggregate='count'))
-             ]
-            )
-    ),
+                 dict(
+                    [
+                        (k, None)
+                        for k in CHART_FIELDS
+                    ] + [
+                        (k, dict(aggregate='array'))
+                        for k in SERIES_FIELDS + ['dataset']
+                    ] + [
+                        ('num_datasets', dict(aggregate='count'))
+                    ]
+                 )),
     DF.add_computed_field(
         target=dict(
             name='series',
@@ -220,7 +220,10 @@ datasets_flow = DF.Flow(*[
     DF.delete_fields(SERIES_FIELDS + ['dataset']),
     DF.add_computed_field(
         target=dict(name='doc_id', type='string'),
-        operation=lambda row: 'dataset/' + md5(row['chart_title'].encode('utf8')).hexdigest()[:16]
+        operation=lambda row: (
+            'dataset/' +
+            md5(row['chart_title'].encode('utf8')).hexdigest()[:16]
+        )
     ),
     *[
         DF.set_type(f, **{'es:keyword': True})
@@ -234,16 +237,17 @@ datasets_flow = DF.Flow(*[
         ]
     ],
     DF.validate(),
-    DF.update_resource(resources=None,name='datasets'),
+    DF.update_resource(resources=None, name='datasets'),
 )
 
 DATASETS_ES_REVISION = 6
+
 
 def flow(*_):
     return DF.Flow(
         datasets_flow,
         es_dumper('datasets', DATASETS_ES_REVISION, 'datasets_in_es')
-)
+    )
 
 
 if __name__ == '__main__':

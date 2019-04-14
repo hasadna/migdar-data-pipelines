@@ -28,6 +28,7 @@ for line in legend:
             current = translations_order.pop(0)
             translations[current] = []
         else:
+            line[0] = line[0].lower().strip()
             translations[current].append(line)
     else:
         current = None
