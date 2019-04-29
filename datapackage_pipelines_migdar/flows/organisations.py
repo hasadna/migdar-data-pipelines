@@ -21,6 +21,7 @@ translations_order = [
     'tags',
     '_'
 ]
+
 translations = {}
 current = None
 for line in legend:
