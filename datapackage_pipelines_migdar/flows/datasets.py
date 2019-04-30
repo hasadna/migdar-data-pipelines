@@ -80,9 +80,11 @@ def extrapulate_years(row):
         out = [str(x) for x in sorted(out)]
     row['extrapulation_years'] = out
 
-def fix_values(row):
-    if row.get('value'):
-        row['value'] = row['value'].replace('%', '')
+def fix_values(rows):
+    for row in rows:
+        if row.get('value'):
+            row['value'] = row['value'].replace('%', '')
+            yield row
 
 CHART_FIELDS = [
     'kind', 'gender_index_dimension', 'life_areas', 'author', 'institution', 'item_type', 'tags', 'tags__ar', 'tags__en', 'language',
