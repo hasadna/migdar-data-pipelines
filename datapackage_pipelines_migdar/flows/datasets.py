@@ -80,6 +80,10 @@ def extrapulate_years(row):
         out = [str(x) for x in sorted(out)]
     row['extrapulation_years'] = out
 
+def fix_values(row):
+    if row.get('value'):
+        row['value'] = row['value'].replace('%', '')
+
 CHART_FIELDS = [
     'kind', 'gender_index_dimension', 'life_areas', 'author', 'institution', 'item_type', 'tags', 'tags__ar', 'tags__en', 'language',
     'chart_title', 'chart_title__ar', 'chart_abstract', 'chart_abstract__ar',    
@@ -143,6 +147,7 @@ datasets_flow = DF.Flow(*[
     ), target=dict(name='out')),
     set_defaults,
     extrapulate_years,
+    fix_values,
     DF.set_type('value', groupChar=',', bareNumber=True),
     DF.set_type('extrapulation_years', type='array', **{'es:itemType': 'string'}),
     DF.validate(),
