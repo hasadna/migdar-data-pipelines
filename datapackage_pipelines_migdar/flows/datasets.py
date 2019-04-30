@@ -50,7 +50,7 @@ def transpose(sheet):
     headers = None
     print(num_rows)
     for i in range(num_rows):
-        row = [cells_row[i] if len(cells_row) > i else None for cells_row in cells]
+        row = [(cells_row[i] if len(cells_row) > i else None) for cells_row in cells]
         if any(row):
             if i == 0:
                 headers = row
@@ -143,7 +143,7 @@ datasets_flow = DF.Flow(*[
     ), target=dict(name='out')),
     set_defaults,
     extrapulate_years,
-    DF.set_type('value', groupChar=',', bareNumber=False),
+    DF.set_type('value', groupChar=',', bareNumber=True),
     DF.set_type('extrapulation_years', type='array', **{'es:itemType': 'string'}),
     DF.validate(),
     split_and_translate('tags', tags_translations, keyword=True),
