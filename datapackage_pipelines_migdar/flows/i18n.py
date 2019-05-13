@@ -1,4 +1,4 @@
-from fuzzywuzzy import process as process_fw
+from fuzzywuzzy import process as process_fw, fuzz
 import tabulator
 import dataflows as DF
 
@@ -94,7 +94,8 @@ def split_and_translate(field, translations_key, delimiter=None, keyword=False):
                 val_ = clean(val)
                 if not val_:
                     continue
-                best = process_fw.extractBests(val_, tx_keys, limit=2, score_cutoff=80)
+                best = process_fw.extractBests(val_, tx_keys,
+                            scorer=fuzz.UWRatio, limit=2, score_cutoff=80)
                 if len(best) > 0:
                     if len(best) > 1:
                         if best[0][1] < 100:
