@@ -85,7 +85,7 @@ def fix_values(rows):
             yield row
 
 CHART_FIELDS = [
-    'kind', 'gender_index_dimension', 'life_areas', 'author', 'institution', 'item_type', 'tags', 'tags__ar', 'tags__en', 'language',
+    'kind', 'gender_index_dimension', 'life_areas', 'author', 'institution', 'item_type', 'tags', 'language',
     'chart_title', 'chart_title__ar', 'chart_abstract', 'chart_abstract__ar',    
 ]
 SERIES_FIELDS = [
@@ -151,7 +151,6 @@ datasets_flow = DF.Flow(*[
     DF.set_type('value', groupChar=',', bareNumber=True),
     DF.set_type('extrapulation_years', type='array', **{'es:itemType': 'string'}),
     DF.validate(),
-    split_and_translate('tags', 'tags', delimiter=',', keyword=True),
     DF.add_computed_field([
         dict(target=dict(
                 name='life_areas',
@@ -223,6 +222,9 @@ datasets_flow = DF.Flow(*[
         ]
     ),
     DF.delete_fields(SERIES_FIELDS + ['dataset']),
+    split_and_translate('tags', 'tags', delimiter=',', keyword=True),
+    split_and_translate('life_areas', 'life_areas', delimiter=',', keyword=True),
+    split_and_translate('language', 'languages', keyword=True),
     DF.add_computed_field(
         target=dict(name='doc_id', type='string'),
         operation=lambda row: (
