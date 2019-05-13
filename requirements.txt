@@ -1,5 +1,5 @@
 plyvel
 datapackage-pipelines-elasticsearch
-dataflows>=0.0.48
+dataflows>=0.0.52
 gunicorn
 fuzzywuzzy[speedup]
