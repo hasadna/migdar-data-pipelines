@@ -5,7 +5,7 @@ import dataflows as DF
 from hashlib import md5
 from decimal import Decimal
 from datapackage_pipelines_migdar.flows.dump_to_es import es_dumper
-from datapackage_pipelines_migdar.flows.i18n import load_tags, split_and_translate
+from datapackage_pipelines_migdar.flows.i18n import split_and_translate
 
 URLS = [
     ['https://docs.google.com/spreadsheets/d/1uDZ-aPGie30IHaCqJOYgERl9hyVCKDm62TrBgkF3jgo/view#gid=',
@@ -38,8 +38,6 @@ URLS = [
      ]        
     ]
 ]
-
-tags_translations = load_tags()
 
 sheets = [base + gid for base, gids in URLS for gid in gids]
 all_headers = set()
@@ -153,7 +151,7 @@ datasets_flow = DF.Flow(*[
     DF.set_type('value', groupChar=',', bareNumber=True),
     DF.set_type('extrapulation_years', type='array', **{'es:itemType': 'string'}),
     DF.validate(),
-    split_and_translate('tags', tags_translations, keyword=True),
+    split_and_translate('tags', 'tags', delimiter=',', keyword=True),
     DF.add_computed_field([
         dict(target=dict(
                 name='life_areas',

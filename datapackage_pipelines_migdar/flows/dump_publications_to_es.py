@@ -2,7 +2,10 @@ from datapackage import Package
 from dataflows import Flow, load, printer, set_type, update_resource, concatenate, dump_to_path, delete_fields, add_field
 from datapackage_pipelines_migdar.flows.dump_to_es import es_dumper
 from datapackage_pipelines_migdar.flows.prepare_data_for_es import PUBLICATIONS_ES_REVISION
-from datapackage_pipelines_migdar.flows.i18n import load_tags, split_and_translate
+from datapackage_pipelines_migdar.flows.i18n import load_legend, split_and_translate
+
+
+translations = load_legend()
 
 
 def split_keyword_list(new_fieldname, fieldname, delimiter=','):
@@ -66,7 +69,10 @@ def main_flow(prefix=''):
         split_keyword_list('resource_type', 'gd_Resource Type'),
         split_keyword_list('languages', 'language_code', ' '),
         split_keyword_list('tags', 'tags'),
-        split_and_translate('tags', load_tags(), keyword=True),
+        split_and_translate('tags', 'tags', keyword=True),
+        split_and_translate('life_areas', 'life_areas', keyword=True),
+        split_and_translate('languages', 'languages', keyword=True),
+        split_and_translate('resource_type', 'resource_type', keyword=True),
         printer()
     )
 

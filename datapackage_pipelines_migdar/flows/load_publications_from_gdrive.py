@@ -7,6 +7,7 @@ from datapackage_pipelines_migdar.flows.common import get_migdar_session
 
 
 def process_row(row):
+    print(row)
     return {k: str(row[k]) if row.get(k) else '' for k in SEARCH_IMPORT_FIELD_NAMES}
 
 

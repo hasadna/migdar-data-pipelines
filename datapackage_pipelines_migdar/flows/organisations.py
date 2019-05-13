@@ -3,39 +3,9 @@ import dataflows as DF
 import tabulator
 from datapackage_pipelines_migdar.flows.dump_to_es import es_dumper
 from datapackage_pipelines_migdar.flows.i18n import \
-    load_tags, split_and_translate, clean
+    split_and_translate, clean
 
 ORGS_URL='https://docs.google.com/spreadsheets/d/1fWHl6rlvpqfCXoM1IVhqlY0SWQ_IYCWukuyCcTDwWjM/view'
-LEGEND_URL='https://docs.google.com/spreadsheets/d/1fWHl6rlvpqfCXoM1IVhqlY0SWQ_IYCWukuyCcTDwWjM/edit#gid=1243311724'
-
-legend = list(tabulator.Stream(LEGEND_URL).open().iter())
-
-translations_order = [
-    'org_kind',
-    'regions',
-    'life_areas',
-    'languages',
-    'specialties',
-    'provided_services',
-    'target_audiences',
-    'tags',
-    '_'
-]
-
-translations = {}
-current = None
-for line in legend:
-    if any(x is not None and x.strip() for x in line):
-        if current is None:
-            current = translations_order.pop(0)
-            translations[current] = []
-        else:
-            line[0] = clean(line[0])
-            translations[current].append(line)
-    else:
-        current = None
-translations['tags'] = load_tags()
-
 
 headers = {
  'org_name': ['שם מלא של הארגון - לתרגום או לתעתיק'],
@@ -69,11 +39,12 @@ org_flow = DF.Flow(
     DF.concatenate(headers, resources='orgs', target=dict(name='orgs')),
     *[
         split_and_translate(
-            f, translations[f],
+            f, f, 
+            delimiter=',',
             keyword=f in ('org_kind', 'life_areas', 'languages', 'tags')
         )
-        for f in translations.keys()
-        if f != '_'
+        for f in ('languages', 'life_areas', 'tags', 'regions', 'org_kind',
+                  'specialties', 'provided_services', 'target_audiences')
     ],
     DF.add_computed_field(
         target='doc_id',
