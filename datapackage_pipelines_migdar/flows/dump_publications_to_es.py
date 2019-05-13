@@ -2,10 +2,7 @@ from datapackage import Package
 from dataflows import Flow, load, printer, set_type, update_resource, concatenate, dump_to_path, delete_fields, add_field
 from datapackage_pipelines_migdar.flows.dump_to_es import es_dumper
 from datapackage_pipelines_migdar.flows.prepare_data_for_es import PUBLICATIONS_ES_REVISION
-from datapackage_pipelines_migdar.flows.i18n import load_legend, split_and_translate
-
-
-translations = load_legend()
+from datapackage_pipelines_migdar.flows.i18n import split_and_translate
 
 
 def split_keyword_list(new_fieldname, fieldname, delimiter=','):
