@@ -25,6 +25,10 @@ def clean_row(row):
     row['arabic'] = row['arabic'] and row['arabic'].strip()
 
 
+def clean(x):
+    return x.replace('\xa0', ' ').strip().lower()
+
+
 translations = {}
 for source, gid in sources.items():
     url = URL.format(gid)
@@ -47,12 +51,14 @@ for source, gid in sources.items():
             if not v:
                 continue
             if isinstance(v, str):
+                v = clean(v)
                 if tx.get(v) not in (None, row):
                     if v not in complained:
                         complained.add(v)
                 tx[v] = row
             else:
                 for vv in v:
+                    vv = clean(vv)
                     if tx.get(vv) not in (None, row):
                         if vv not in complained:
                             complained.add(vv)
@@ -62,10 +68,6 @@ for source, gid in sources.items():
         for i in sorted(complained):
             print('- {}'.format(i))
     translations[source] = tx
-
-
-def clean(x):
-    return x.replace('\xa0', ' ').strip().lower()
 
 
 def split_and_translate(field, translations_key, delimiter=None, keyword=False):
