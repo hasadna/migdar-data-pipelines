@@ -77,6 +77,6 @@ def flow(*args):
         update_resource('search_import_index', name='search_import', path='search_import.csv',
                         schema={'fields': [{'name': n, 'type': 'string'} for n in SEARCH_IMPORT_FIELD_NAMES]},
                         **{'dpp:streaming': True}),
-        printer(num_rows=1, tablefmt='plain' if is_dpp else 'html', fields=['migdar_id', 'pubyear', 'title']),
+        printer(num_rows=20, tablefmt='plain' if is_dpp else 'html', fields=['migdar_id', 'pubyear', 'title']),
         dump_to_path('data/search_import_from_gdrive')
     )
