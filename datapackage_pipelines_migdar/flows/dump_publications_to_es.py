@@ -1,3 +1,5 @@
+import re
+
 from datapackage import Package
 from dataflows import Flow, load, printer, set_type, update_resource, concatenate, dump_to_path, delete_fields, add_field
 from datapackage_pipelines_migdar.flows.dump_to_es import es_dumper
@@ -36,6 +38,17 @@ def prefer_gd(field_name):
     )
 
 
+years = re.compile('[12][0-9]{3}')
+
+
+def extract_year(record):
+    pubyear = record.get('pubyear')
+    if pubyear:
+        years = years.findall(pubyear)
+        if res:
+            return int(years[0])
+
+
 def main_flow(prefix=''):
     source_url = '{}data/publications_for_es/datapackage.json'.format(prefix)
     package = Package(source_url)
@@ -62,7 +75,8 @@ def main_flow(prefix=''):
         set_type('title',        **{'es:title': True}),
         set_type('notes',        **{'es:hebrew': True}),
         set_type('publisher',    **{'es:keyword': True}),
-        add_field('year', 'integer', default=lambda row: row.get('pubyear'), bare_number=False),
+        add_field('year', 'integer',
+                  default=extract_year),
         split_keyword_list('life_areas', 'gd_Life Domains'),
         split_keyword_list('resource_type', 'gd_Resource Type'),
         split_keyword_list('languages', 'language_code', ' '),
