@@ -62,6 +62,7 @@ def main_flow(prefix=''):
         set_type('title',        **{'es:title': True}),
         set_type('notes',        **{'es:hebrew': True}),
         set_type('publisher',    **{'es:keyword': True}),
+        add_field('year', 'integer', default=lambda row: row.get('pubyear'), bare_number=False),
         split_keyword_list('life_areas', 'gd_Life Domains'),
         split_keyword_list('resource_type', 'gd_Resource Type'),
         split_keyword_list('languages', 'language_code', ' '),
