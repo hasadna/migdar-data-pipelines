@@ -83,7 +83,6 @@ def main_flow(prefix=''):
             dict(
                 title=[],
                 pubyear=[],
-                year=[],
                 publisher=[],
                 author=[],
                 life_areas=[],
