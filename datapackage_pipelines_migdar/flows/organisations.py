@@ -49,7 +49,7 @@ org_flow = DF.Flow(
             for x in [
                 'alt_name%d' % i
                 for i in range(1, 6)
-            ]
+            ] + ['org_name']
             if x in r and r[x]
         ]
     ),
