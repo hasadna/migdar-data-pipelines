@@ -96,8 +96,10 @@ def flow(*args):
                 migdar_id=['key'],
                 item_kind=['reportType'],
                 source_kind=[],
-            )
+            ),
+            target={'name': 'zotero', 'path': 'zotero.csv'}
         ),
+        DF.dump_to_path('data/zotero')
     )
 
 

@@ -13,6 +13,12 @@ load_publications_from_gdrive:
   pipeline:
   - flow: datapackage_pipelines_migdar.flows.load_publications_from_gdrive
 
+zotero:
+  schedule:
+    crontab: "0 0 * * *"
+  pipeline:
+  - flow: datapackage_pipelines_migdar.flows.zotero
+
 join_publications_unique_records:
   dependencies:
   - datapackage: data/search_import_from_gdrive/datapackage.json

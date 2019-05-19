@@ -78,7 +78,7 @@ def main_flow(prefix=''):
         split_keyword_list('source_kind', 'gd_Resource Type'),
         split_keyword_list('languages', 'language_code', ' '),
         split_keyword_list('tags', 'tags'),
-        zotero(),
+        load('data/zotero/zotero.csv'),
         concatenate(
             dict(
                 title=[],
@@ -97,7 +97,7 @@ def main_flow(prefix=''):
                 isbn=[],
                 physical_description=[],
                 publication_distribution_details=[],
-                
+
             ),
             target=dict(name='publications', path='publications.csv')
         ),
