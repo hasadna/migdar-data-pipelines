@@ -234,8 +234,6 @@ def flow(*args):
           for name in ['last_updated_at', 'last_modified_at', 'created_at']),
         set_revisions,
         filter_rows(equals=[{'__next_update_days': FILTER_NEXT_UPDATE_DAYS}]) if FILTER_NEXT_UPDATE_DAYS else None,
-        add_computed_field([{'operation': 'format', 'target': 'doc_id', 'with': KEY_PATTERN}]),
-        add_computed_field([{'operation': 'format', 'target': 'page_title', 'with': PAGE_TITLE_PATTERN}]),
         add_date_range(),
         dump_to_path('data/publications_for_es'),
         printer(tablefmt='plain' if is_dpp else 'html', num_rows=1, fields=['doc_id']),

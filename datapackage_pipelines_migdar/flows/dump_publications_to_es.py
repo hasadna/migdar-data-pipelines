@@ -1,11 +1,12 @@
 import re
 
 from datapackage import Package
-from dataflows import Flow, load, printer, set_type, update_resource, concatenate, dump_to_path, delete_fields, add_field
+from dataflows import Flow, load, printer, set_type, \
+    concatenate, delete_fields, add_field, add_computed_field
 from datapackage_pipelines_migdar.flows.dump_to_es import es_dumper
-from datapackage_pipelines_migdar.flows.prepare_data_for_es import PUBLICATIONS_ES_REVISION
+from datapackage_pipelines_migdar.flows.prepare_data_for_es import \
+    PUBLICATIONS_ES_REVISION, KEY_PATTERN, PAGE_TITLE_PATTERN
 from datapackage_pipelines_migdar.flows.i18n import split_and_translate
-from datapackage_pipelines_migdar.flows.zotero import flow as zotero
 
 
 def split_keyword_list(new_fieldname, fieldname, delimiter=','):
@@ -27,13 +28,16 @@ def split_keyword_list(new_fieldname, fieldname, delimiter=','):
     )
     if new_fieldname != fieldname:
         steps.append(delete_fields([fieldname]))
-    steps.append(set_type(new_fieldname, type='array', **{'es:itemType': 'string', 'es:keyword': True}))
+    steps.append(set_type(new_fieldname, type='array',
+                          **{'es:itemType': 'string', 'es:keyword': True}))
     return Flow(*steps)
 
 
 def prefer_gd(field_name):
     def func(row):
-        row[field_name] = row.get('gd_{}'.format(field_name)) or row.get(field_name)
+        row[field_name] = (
+            row.get('gd_{}'.format(field_name)) or row.get(field_name)
+        )
     return Flow(
         func, delete_fields(['gd_{}'.format(field_name)])
     )
@@ -65,7 +69,8 @@ def main_flow(prefix=''):
     return Flow(
         load(source_url),
         lambda row: dict(row, json='{}'),
-        concatenate(all_fields, target=dict(name='publications', path='publications.csv')),
+        concatenate(all_fields,
+                    target=dict(name='publications', path='publications.csv')),
         delete_fields(['json']),
         prefer_gd('title'),
         prefer_gd('notes'),
@@ -96,6 +101,7 @@ def main_flow(prefix=''):
                 isbn=[],
                 physical_description=[],
                 publication_distribution_details=[],
+                doc_id=[],
 
             ),
             target=dict(name='publications', path='publications.csv')
@@ -110,8 +116,15 @@ def main_flow(prefix=''):
         split_and_translate('languages', 'languages', keyword=True),
         split_and_translate('source_kind', 'source_kind', keyword=True),
         split_and_translate('item_kind', 'item_kind', keyword=True),
-        printer()
+        printer(),
+        add_computed_field([
+            {'operation': 'format', 'target': 'doc_id', 'with': KEY_PATTERN},
+            {'operation': 'format', 'target': 'page_title',
+             'with': PAGE_TITLE_PATTERN},
+        ]),
+        add_computed_field([]),
     )
+
 
 def flow(*args):
     return Flow(
@@ -119,5 +132,6 @@ def flow(*args):
         es_dumper('publications', PUBLICATIONS_ES_REVISION, 'published_in_es'),
     )
 
-if __name__=='__main__':
+
+if __name__ == '__main__':
     main_flow('../../').process()
