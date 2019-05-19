@@ -8,7 +8,7 @@ sources = dict([
     ('languages', 0),
     ('life_areas', 809871679),
     ('source_kind', 355649685),
-    ('resource_type', 1907901926),
+    ('item_kind', 1907901926),
     ('tags', 1460345471),
     ('regions', 208533187),
     ('org_kind', 767728199),
