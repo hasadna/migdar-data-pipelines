@@ -53,7 +53,7 @@ org_flow = DF.Flow(
             if x in r and r[x]
         ]
     ),
-    DF.delete_fields('alt_name[1-5]'),
+    DF.delete_fields(['alt_name[1-5]']),
     *[
         split_and_translate(
             f, f, 
