@@ -99,7 +99,8 @@ def flow(*args):
             ),
             target={'name': 'zotero', 'path': 'zotero.csv'}
         ),
-        DF.dump_to_path('data/zotero')
+        DF.dump_to_path('data/zotero'),
+        DF.update_resource(None, **{'dpp:streaming': True})
     )
 
 
