@@ -30,6 +30,11 @@ headers = {
  'org_phone_number': ['טלפון ליצירת קשר עם הארגון'],
  'org_email_address': ['מייל ליצירת קשר עם הארגון'],
  'logo_url': ['לוגו'],
+ 'alt_name1': ['שם נוסף1'],
+ 'alt_name2': ['שם נוסף2'],
+ 'alt_name3': ['שם נוסף3'],
+ 'alt_name4': ['שם נוסף4'],
+ 'alt_name5': ['שם נוסף5'],
 }
 
 ORGS_ES_REVISION = 3
@@ -37,6 +42,18 @@ ORGS_ES_REVISION = 3
 org_flow = DF.Flow(
     DF.load(ORGS_URL, name='orgs'), 
     DF.concatenate(headers, resources='orgs', target=dict(name='orgs')),
+    DF.add_field(
+        'alt_names', 'array',
+        default=lambda r: [
+            r[x]
+            for x in [
+                'alt_name%d' % i
+                for i in range(1, 6)
+            ]
+            if x in r and r[x]
+        ]
+    ),
+    DF.delete_fields('alt_name[1-5]'),
     *[
         split_and_translate(
             f, f, 
@@ -53,6 +70,8 @@ org_flow = DF.Flow(
     ),
     DF.set_type('org_name',        **{'es:title': True}),
     DF.set_type('org_name__ar',    **{'es:title': True}),
+    DF.set_type('alt_names',       
+                **{'es:itemType': 'string', 'es:title': True}),
     *[
         DF.set_type(f, **{'es:index': False})
         for f in [
