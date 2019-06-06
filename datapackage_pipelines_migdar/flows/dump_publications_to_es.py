@@ -83,7 +83,7 @@ def main_flow(prefix=''):
         split_keyword_list('source_kind', 'gd_Resource Type'),
         split_keyword_list('languages', 'language_code', ' '),
         split_keyword_list('tags', 'tags'),
-        load('data/zotero/zotero.csv'),
+        load('data/zotero/datapackage.json'),
         concatenate(
             dict(
                 title=[],

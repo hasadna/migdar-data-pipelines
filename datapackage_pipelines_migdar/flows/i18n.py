@@ -16,6 +16,7 @@ sources = dict([
     ('provided_services', 689904800),
     ('target_audiences', 639424575),
     ('yes_no', 1242341367),
+    ('compact_services', 1440766219),
 ])
 
 
@@ -40,6 +41,8 @@ for source, gid in sources.items():
                          for k, v in row.items()
                          if k.startswith('value') and v
                      ]),
+        DF.add_field('hebara', 'string',
+                     default=lambda row: '%{hebrew}s - %{arabic}s'.format(**row)),
         DF.filter_rows(lambda row: row['hebrew']),
         clean_row,
         DF.delete_fields(['value\\d'])
@@ -92,10 +95,10 @@ def split_and_translate(field, translations_key, delimiter=None, keyword=False):
                 row['{}{}'.format(field, lang)] = []
             for val in values:
                 val_ = clean(val)
-                if not val_:
+                if not val_ or len(val) < 3:
                     continue
                 best = process_fw.extractBests(val_, tx_keys,
-                            scorer=fuzz.UWRatio, limit=2, score_cutoff=80)
+                            scorer=fuzz.UQRatio, limit=2, score_cutoff=90)
                 if len(best) > 0:
                     if len(best) > 1:
                         if best[0][1] < 100:

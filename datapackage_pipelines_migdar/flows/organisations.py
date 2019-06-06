@@ -53,15 +53,16 @@ org_flow = DF.Flow(
             if x in r and r[x]
         ]
     ),
+    DF.add_field('compact_services', 'string', lambda row: row.get('provided_services'))
     DF.delete_fields(['alt_name[1-5]']),
     *[
         split_and_translate(
             f, f, 
             delimiter=',',
-            keyword=f in ('org_kind', 'life_areas', 'languages', 'tags')
+            keyword=f in ('org_kind', 'life_areas', 'languages', 'tags', 'compact_services')
         )
         for f in ('languages', 'life_areas', 'tags', 'regions', 'org_kind',
-                  'specialties', 'provided_services', 'target_audiences')
+                  'specialties', 'provided_services', 'target_audiences', 'compact_services')
     ],
     DF.add_computed_field(
         target='doc_id',

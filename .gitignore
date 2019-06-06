@@ -122,3 +122,4 @@ devops/k8s/secrets.env.production
 secret*
 .dpp
 .checkpoints
+pubfiles/
