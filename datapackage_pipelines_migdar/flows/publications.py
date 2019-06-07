@@ -189,7 +189,7 @@ def base_flow():
     )
 
 
-PUBLICATIONS_ES_REVISION = 30
+PUBLICATIONS_ES_REVISION = 31
 
 
 def flow(*_):
