@@ -135,6 +135,8 @@ def base_flow():
             load(source['filename'],
                  sheet=source['sheet'],
                  headers=source['headers'],
+                 infer_strategy=load.INFER_STRINGS,
+                 cast_strategy=load.CAST_TO_STRINGS,
                  limit_rows=3)
             for source in sources[0]
         ],
