@@ -23,7 +23,7 @@ PAGE_TITLE_PATTERN = '{title}'
 
 SCOPES = ['https://www.googleapis.com/auth/drive']
 try:
-    credentials = service_account.Credentials.from_service_account_file('/migdar-gdrive/gdrive_creds.json', scopes=SCOPES)
+    credentials = service_account.Credentials.from_service_account_file('/migdar-gdrive/secret-g-service-account.json', scopes=SCOPES)
 except Exception as e:
     logging.exception('Failed to open creds!')
     credentials = service_account.Credentials.from_service_account_file('gdrive_creds.json', scopes=SCOPES)
