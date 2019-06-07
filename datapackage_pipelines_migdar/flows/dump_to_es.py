@@ -98,7 +98,7 @@ class DumpToElasticSearch(ESDumper):
 
     def handle_resource(self, resource, spec, parameters, datapackage):
         return super(DumpToElasticSearch, self)\
-                .handle_resource(self.format_datetime_rows(spec, resource), 
+                .handle_resource(resource, 
                                  spec, parameters, datapackage)
 
     def finalize(self):
@@ -108,21 +108,34 @@ class DumpToElasticSearch(ESDumper):
                     revision = config['revision']
                     doc_type = config['doc-type']
                     logging.info('DELETING from "%s", "%s" items with revision < %d',
-                                index_name, doc_type, revision)
-                    ret = self.engine.delete_by_query(
-                        index_name, 
+                                 index_name, doc_type, revision)
+                    queries = [
                         {
-                            "query": {
-                                "range": {
-                                    "__revision": {
-                                        "lt": revision
+                            "bool": {
+                                "must_not": {
+                                    "exists": {
+                                        "field": "revision"
                                     }
                                 }
                             }
                         },
-                        doc_type=doc_type
-                    )
-                    logging.info('GOT %r', ret)
+                        {
+                            "range": {
+                                "revision": {
+                                    "lt": revision
+                                }
+                            }
+                        }
+                    ]
+                    for i, q in enumerate(queries):
+                        ret = self.engine.delete_by_query(
+                            index_name,
+                            {
+                                "query": q
+                            },
+                            doc_type=doc_type
+                        )
+                        logging.info('GOT (%d) %r', i, ret)
 
 
 def update_pk(pk):
@@ -139,7 +152,7 @@ def collate():
         for row in rows:
             value = dict(
                 (k,v) for k,v in row.items()
-                if k != 'doc_id'
+                if k not in ('doc_id', 'revision')
             )
             yield dict(
                 doc_id=row['doc_id'],
@@ -161,6 +174,7 @@ def collate():
 def es_dumper(resource_name, revision, path):
     return DF.Flow(
         update_pk('doc_id'),
+        DF.add_field('revision', 'integer', default=revision),
         DumpToElasticSearch({'migdar': [{'resource-name': resource_name,
                                          'doc-type': resource_name,
                                          'revision': revision}]})(),
