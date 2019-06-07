@@ -1,6 +1,6 @@
 plyvel
 datapackage-pipelines-elasticsearch
-dataflows>=0.0.52
+dataflows>=0.0.55
 gunicorn
 fuzzywuzzy[speedup]
 google-api-python-client
