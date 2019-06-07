@@ -53,7 +53,7 @@ org_flow = DF.Flow(
             if x in r and r[x]
         ]
     ),
-    DF.add_field('compact_services', 'string', lambda row: row.get('provided_services'))
+    DF.add_field('compact_services', 'string', lambda row: row.get('provided_services')),
     DF.delete_fields(['alt_name[1-5]']),
     *[
         split_and_translate(
