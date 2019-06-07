@@ -3,3 +3,4 @@ datapackage-pipelines-elasticsearch
 dataflows>=0.0.52
 gunicorn
 fuzzywuzzy[speedup]
+google-api-python-client
