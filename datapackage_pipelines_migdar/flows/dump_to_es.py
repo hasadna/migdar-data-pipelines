@@ -156,18 +156,24 @@ def collate():
             )
             yield dict(
                 doc_id=row['doc_id'],
+                revision=row['revision'],
                 score=1,
                 value=value
             )
+
     def func(package):
         package.pkg.descriptor['resources'][0]['schema']['fields'] = [
             dict(name='doc_id', type='string'),
+            dict(name='revision', type='integer'),
             dict(name='score', type='number'),
             dict(name='value', type='object', **{'es:index': False})
         ]
         yield package.pkg
-        for res in package:
-            yield process(res)
+        for i, res in enumerate(package):
+            if i == 0:
+                yield process(res)
+            else:
+                yield res
     return func
 
 
@@ -183,5 +189,6 @@ def es_dumper(resource_name, revision, path):
         DumpToElasticSearch({'migdar': [{'resource-name': resource_name,
                                          'doc-type': 'document',
                                          'revision': revision}]})(),
-        DF.update_resource(None, **{'dpp:streaming': True})
+        DF.update_resource(None, **{'dpp:streaming': True}),
+        DF.printer(),
     )

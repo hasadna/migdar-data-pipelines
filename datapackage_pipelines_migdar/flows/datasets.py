@@ -250,7 +250,7 @@ datasets_flow = DF.Flow(*[
     DF.update_resource(resources=None, name='datasets'),
 )
 
-DATASETS_ES_REVISION = 8
+DATASETS_ES_REVISION = 9
 
 
 def flow(*_):

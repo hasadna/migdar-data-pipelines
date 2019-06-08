@@ -37,7 +37,7 @@ headers = {
  'alt_name5': ['שם נוסף5'],
 }
 
-ORGS_ES_REVISION = 5
+ORGS_ES_REVISION = 6
 
 org_flow = DF.Flow(
     DF.load(ORGS_URL, name='orgs'), 
