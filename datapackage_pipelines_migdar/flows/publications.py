@@ -164,7 +164,11 @@ def base_flow():
                 # 'bib_place_publisher_date',
                 # 'bib_standard_technical_report_number',
 
-            }
+            },
+            target=dict(
+                name='publications',
+                path='data/publications.csv'
+            )
         ),
         split_keyword_list('item_kind'),
         split_keyword_list('life_areas'),
