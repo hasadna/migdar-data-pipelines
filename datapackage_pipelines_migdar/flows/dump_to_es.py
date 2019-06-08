@@ -147,7 +147,7 @@ def update_pk(pk):
     return update_schema
 
 
-def collate():
+def collate(revision):
     def process(rows):
         for row in rows:
             value = dict(
@@ -156,7 +156,7 @@ def collate():
             )
             yield dict(
                 doc_id=row['doc_id'],
-                revision=row['revision'],
+                revision=revision,
                 score=1,
                 value=value
             )
@@ -185,7 +185,7 @@ def es_dumper(resource_name, revision, path):
                                          'doc-type': resource_name,
                                          'revision': revision}]})(),
         DF.dump_to_path('data/{}'.format(path)),
-        collate(),
+        collate(revision),
         DumpToElasticSearch({'migdar': [{'resource-name': resource_name,
                                          'doc-type': 'document',
                                          'revision': revision}]})(),
