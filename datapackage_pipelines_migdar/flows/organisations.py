@@ -37,7 +37,18 @@ headers = {
  'alt_name5': ['שם נוסף5'],
 }
 
-ORGS_ES_REVISION = 6
+ORGS_ES_REVISION = 7
+
+def fix_doc_id(rows):
+    used = {}
+    for row in rows:
+        doc_id = row['doc_id']
+        used.setdefault(doc_id, 0)
+        if used[doc_id] != 0:
+            row['doc_id'] += '.{}'.format(used[doc_id])
+        yield row
+        used[doc_id] += 1
+
 
 org_flow = DF.Flow(
     DF.load(ORGS_URL, name='orgs'), 
@@ -69,6 +80,7 @@ org_flow = DF.Flow(
         operation='format',
         with_='org/{entity_id}'
     ),
+    fix_doc_id,
     DF.set_type('org_name',        **{'es:title': True}),
     DF.set_type('org_name__ar',    **{'es:title': True}),
     DF.set_type('alt_names',       
