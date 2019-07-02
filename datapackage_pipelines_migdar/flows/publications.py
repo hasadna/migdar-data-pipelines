@@ -15,6 +15,7 @@ from dataflows import (
 
 from datapackage_pipelines_migdar.flows.dump_to_es import es_dumper
 from datapackage_pipelines_migdar.flows.i18n import split_and_translate
+from datapackage_pipelines_migdar.flows.constants import REVISION
 
 
 KEY_PATTERN = 'publications/{migdar_id}'
@@ -193,13 +194,10 @@ def base_flow():
     )
 
 
-PUBLICATIONS_ES_REVISION = 33
-
-
 def flow(*_):
     return Flow(
         base_flow(),
-        es_dumper('publications', PUBLICATIONS_ES_REVISION, 'publications_in_es')
+        es_dumper('publications', REVISION, 'publications_in_es')
     )
 
 

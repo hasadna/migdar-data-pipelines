@@ -6,6 +6,7 @@ from hashlib import md5
 from decimal import Decimal
 from datapackage_pipelines_migdar.flows.dump_to_es import es_dumper
 from datapackage_pipelines_migdar.flows.i18n import split_and_translate
+from datapackage_pipelines_migdar.flows.constants import REVISION
 
 URLS = [
     ['https://docs.google.com/spreadsheets/d/1uDZ-aPGie30IHaCqJOYgERl9hyVCKDm62TrBgkF3jgo/view#gid=',
@@ -250,13 +251,11 @@ datasets_flow = DF.Flow(*[
     DF.update_resource(resources=None, name='datasets'),
 )
 
-DATASETS_ES_REVISION = 9
-
 
 def flow(*_):
     return DF.Flow(
         datasets_flow,
-        es_dumper('datasets', DATASETS_ES_REVISION, 'datasets_in_es')
+        es_dumper('datasets', REVISION, 'datasets_in_es')
     )
 
 

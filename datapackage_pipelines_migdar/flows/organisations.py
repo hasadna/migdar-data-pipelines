@@ -4,6 +4,7 @@ import tabulator
 from datapackage_pipelines_migdar.flows.dump_to_es import es_dumper
 from datapackage_pipelines_migdar.flows.i18n import \
     split_and_translate, clean
+from datapackage_pipelines_migdar.flows.constants import REVISION
 
 ORGS_URL='https://docs.google.com/spreadsheets/d/1fWHl6rlvpqfCXoM1IVhqlY0SWQ_IYCWukuyCcTDwWjM/view'
 
@@ -36,8 +37,6 @@ headers = {
  'alt_name4': ['שם נוסף4'],
  'alt_name5': ['שם נוסף5'],
 }
-
-ORGS_ES_REVISION = 7
 
 def fix_doc_id(rows):
     used = {}
@@ -99,7 +98,7 @@ org_flow = DF.Flow(
 def flow(*_):
     return DF.Flow(
         org_flow,
-        es_dumper('orgs', ORGS_ES_REVISION, 'orgs_in_es')
+        es_dumper('orgs', REVISION, 'orgs_in_es')
     )
 
 if __name__ == '__main__':

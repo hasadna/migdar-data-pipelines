@@ -5,8 +5,9 @@ from dataflows import Flow, load, printer, set_type, \
     concatenate, delete_fields, add_field, add_computed_field
 from datapackage_pipelines_migdar.flows.dump_to_es import es_dumper
 from datapackage_pipelines_migdar.flows.prepare_data_for_es import \
-    PUBLICATIONS_ES_REVISION, KEY_PATTERN, PAGE_TITLE_PATTERN
+    KEY_PATTERN, PAGE_TITLE_PATTERN
 from datapackage_pipelines_migdar.flows.i18n import split_and_translate
+from datapackage_pipelines_migdar.flows.constants import REVISION
 
 
 def split_keyword_list(new_fieldname, fieldname, delimiter=','):
@@ -129,7 +130,7 @@ def main_flow(prefix=''):
 def flow(*args):
     return Flow(
         main_flow(),
-        es_dumper('publications', PUBLICATIONS_ES_REVISION, 'published_in_es'),
+        es_dumper('publications', REVISION, 'published_in_es'),
     )
 
 

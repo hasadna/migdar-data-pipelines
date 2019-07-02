@@ -11,10 +11,10 @@ from unidecode import unidecode
 import re
 from datapackage_pipelines_migdar.flows import constants
 from datapackage_pipelines_migdar.flows.common import DATAFLOWS_DB_ENGINE
+from datapackage_pipelines_migdar.flows.constants import REVISION
 
 
 DB_TABLE = constants.PUBLICATIONS_DB_TABLE
-PUBLICATIONS_ES_REVISION = 23
 KEY_FIELDS = ['migdar_id']
 HASH_FIELDS = None
 FILTER_NEXT_UPDATE_DAYS = None
@@ -223,7 +223,7 @@ def flow(*args):
     return Flow(
         load('data/unique_records_full/datapackage.json', resources=['unique_records']),
         load('data/app_records_full/datapackage.json', resources=['search_app_records']),
-        add_field('__revision', 'integer', PUBLICATIONS_ES_REVISION),
+        add_field('__revision', 'integer', REVISION),
         *(add_field(f['name'], f['type']) for f in STATUS_FIELDS),
         manage_revisions,
         *(dump_to_sql({DB_TABLE: {'resource-name': resource_name,
