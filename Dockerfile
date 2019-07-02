@@ -6,6 +6,7 @@ COPY docker-dpp-run.sh /dpp/docker/run.sh
 
 COPY requirements.txt /pipelines/
 RUN python3 -m pip install -Ur requirements.txt
+RUN python3 -m pip install -U https://github.com/datahq/dataflows/archive/master.zip
 
 COPY setup.py /pipelines/
 RUN python3 -m pip install -e .
