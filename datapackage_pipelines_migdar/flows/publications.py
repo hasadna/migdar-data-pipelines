@@ -141,6 +141,7 @@ def base_flow():
                  name=source['filename'])
             for source in sources[0]
         ],
+        filter_rows(lambda row: row.get('migdar_id')),
         load('data/zotero/zotero.csv'),
         concatenate(
             fields={
