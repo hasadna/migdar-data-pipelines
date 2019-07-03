@@ -94,7 +94,8 @@ CHART_FIELDS = [
 ]
 SERIES_FIELDS = [
     'series_title', 'series_title__ar', 'series_abstract', 'series_abstract__ar',
-    'source_description', 'source_detail_description', 'gender', 'extrapulation_years', 'source_url', 'units',
+    'source_description', 'source_detail_description', 'gender', 'extrapulation_years',
+    'source_url', 'units', 'order_index',
 ]
 
 datasets_flow = DF.Flow(*[
@@ -149,6 +150,8 @@ datasets_flow = DF.Flow(*[
         year=[],
         value=[],
     ), target=dict(name='out')),
+    DF.add_field('order_index', 'integer'),
+    lambda rows: ({**row, **{'order_index': i}} for i, row in enumerate(rows)),
     set_defaults,
     extrapulate_years,
     fix_values,
@@ -216,14 +219,16 @@ datasets_flow = DF.Flow(*[
                 'es:index': False
             }
         ),
-        operation=lambda row: [
-            dict(
-                (k, row[k][i])
-                for k in SERIES_FIELDS + ['dataset']
-                if len(row[k]) == row['num_datasets']
-            )
-            for i in range(row['num_datasets'])
-        ]
+        operation=lambda row: sorted(
+            (
+                dict(
+                    (k, row[k][i])
+                    for k in SERIES_FIELDS + ['dataset']
+                    if len(row[k]) == row['num_datasets']
+                )
+                for i in range(row['num_datasets'])
+            ), key=lambda row: row.get('order_index')
+        )
     ),
     DF.delete_fields(SERIES_FIELDS + ['dataset']),
     split_and_translate('tags', 'tags', delimiter=',', keyword=True),
