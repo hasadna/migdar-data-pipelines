@@ -86,7 +86,7 @@ def flow(*args):
             dict(
                 title=[],
                 pubyear=['date'],
-                publisher=['institution', 'publication'],
+                publisher=['institution', 'publication', 'publicationTitle'],
                 author=[],
                 life_areas=[],
                 notes=['abstractNote'],
