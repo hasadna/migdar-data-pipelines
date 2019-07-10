@@ -179,6 +179,7 @@ def base_flow():
         split_keyword_list('languages', ' '),
         split_keyword_list('tags'),
         set_type('title',        **{'es:title': True}),
+        set_type('author',       **{'es:boost': True}),
         set_type('notes',        **{'es:hebrew': True}),
         set_type('publisher',    **{'es:keyword': True}),
         add_field('year', 'integer',
