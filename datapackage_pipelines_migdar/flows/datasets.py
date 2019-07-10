@@ -89,12 +89,17 @@ def fix_values(rows):
             yield row
 
 CHART_FIELDS = [
-    'kind', 'gender_index_dimension', 'life_areas', 'author', 'institution', 'item_type', 'tags', 'language',
-    'chart_title', 'chart_title__ar', 'chart_abstract', 'chart_abstract__ar',    
+    'kind', 'gender_index_dimension', 'life_areas', 'item_type', 'tags', 'language',
+    'author', 'author__ar', 'author__en',
+    'institution', 'institution__ar', 'institution__en',
+    'chart_title', 'chart_title__ar', 'chart_title__en',
+    'chart_abstract', 'chart_abstract__ar', 'chart_abstract__en'
 ]
 SERIES_FIELDS = [
-    'series_title', 'series_title__ar', 'series_abstract', 'series_abstract__ar',
-    'source_description', 'source_detail_description', 'gender', 'extrapulation_years',
+    'series_title', 'series_title__ar', 'series_title__en',
+    'series_abstract', 'series_abstract__ar', 'series_abstract__en',
+    'source_description', 'source_description__ar', 'source_description__en',
+    'source_detail_description', 'gender', 'extrapulation_years',
     'source_url', 'units', 'order_index',
 ]
 
@@ -114,24 +119,34 @@ datasets_flow = DF.Flow(*[
         life_area2=['תחום חיים2 ביודעת'],
         life_area3=['תחום חיים3 ביודעת'],
         author=['Author'],
+        author__ar=['מחברת בערבית'],
+        author__en=['מחברת באנגלית'],
         institution=['Institution'],
+        institution__ar=['מוסד בערבית'],
+        institution__en=['מוסד באנגלית'],
         item_type=['Item type'],
         tags=['Tags'],
         language=[],
         chart_title=['כותרת התרשים (נשים וגברים ביחד):', ],
         chart_title__ar=['כותרת התרשים בערבית'],
+        chart_title__en=['כותרת התרשים באנגלית'],
         chart_abstract=['אבסטרקט של התרשים'],
         chart_abstract__ar=['אבסטרקט התרשים בערבית'],
+        chart_abstract__en=['אבסטרקט התרשים באנגלית'],
         series_title=['כותרת סדרת הנתונים (נשים או גברים):'],
         series_title__ar=['כותרת הסידרה בערבית',],
+        series_title__en=['כותרת הסידרה באנגלית',],
         series_abstract=[
           'אבסטרקט של סדרת הנתונים (נשים או גברים)',            
         ],
         series_abstract__ar=['אבסטרקט הסידרה בערבית'],
+        series_abstract__en=['אבסטרקט הסידרה באנגלית'],
         source_description=[
             'מקור הנתונים',
             'מקור הנתונים שיופיע מתחת לתרשים',
         ],
+        source_description__ar=['מקור הנתונים בערבית'],
+        source_description__en=['מקור הנתונים באנגלית'],
         source_detail_description=[
             'מקור הנתונים - כותרת הלוח',
             'פירוט נוסף על מקור הנתונים (רלבנטי רק כאשר אין לינק למקור הנתונים)',
@@ -249,7 +264,7 @@ datasets_flow = DF.Flow(*[
     *[
         DF.set_type(f, **{'es:title': True})
         for f in [
-            'chart_title', 'chart_title__ar'
+            'chart_title', 'chart_title__ar', 'chart_title__en',
         ]
     ],
     DF.validate(),

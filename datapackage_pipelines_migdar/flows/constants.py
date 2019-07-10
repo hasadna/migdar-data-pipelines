@@ -10,4 +10,4 @@ PUBLICATIONS_DB_TABLE = '_elasticsearch_mirror__publications'
 PUBLICATIONS_KEY_PATTERN = 'publications/{migdar_id}'
 PUBLICATIONS_PAGE_TITLE_PATTERN = '{title}'
 
-REVISION = 34
+REVISION = 35
