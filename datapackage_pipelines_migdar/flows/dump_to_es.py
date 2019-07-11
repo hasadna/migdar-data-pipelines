@@ -34,9 +34,8 @@ class BoostingMappingGenerator(MappingGenerator):
         return prop
 
 
-
 class DumpToElasticSearch(ESDumper):
-    
+
     def __init__(self, indexes, **parameters):
         parameters['indexes'] = indexes
         self.mapper_cls = BoostingMappingGenerator
@@ -107,6 +106,8 @@ class DumpToElasticSearch(ESDumper):
                 if 'revision' in config:
                     revision = config['revision']
                     doc_type = config['doc-type']
+                    if doc_type == 'document':
+                        continue
                     logging.info('DELETING from "%s", "%s" items with revision < %d',
                                  index_name, doc_type, revision)
                     queries = [
