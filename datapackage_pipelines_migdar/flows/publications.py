@@ -158,7 +158,7 @@ def base_flow():
                 'pubyear': ['pubyear/pubdate'],
                 'life_areas': ['Life Domains', 'Domain'],
                 'source_kind': ['Resource Type', 'Resource type'],
-                'authors': [],
+                'authors': ['author'],
                 'url': ['URL'],
 
                 # 'publication_distribution_details',
