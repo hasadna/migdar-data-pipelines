@@ -158,7 +158,7 @@ def base_flow():
                 'pubyear': ['pubyear/pubdate'],
                 'life_areas': ['Life Domains', 'Domain'],
                 'source_kind': ['Resource Type', 'Resource type'],
-                'author': [],
+                'authors': [],
                 'url': ['URL'],
 
                 # 'publication_distribution_details',
@@ -179,7 +179,7 @@ def base_flow():
         split_keyword_list('languages', ' '),
         split_keyword_list('tags'),
         set_type('title',        **{'es:title': True}),
-        set_type('author',       **{'es:boost': True}),
+        set_type('authors',       **{'es:boost': True}),
         set_type('notes',        **{'es:hebrew': True}),
         set_type('publisher',    **{'es:keyword': True, 'es:title': True}),
         add_field('year', 'integer',

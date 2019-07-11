@@ -71,7 +71,7 @@ def flow(*args):
         simplify_tags,
         extract_tags('life_areas', ['Domain']),
         extract_tags('source_kind', ['Source', 'Resource', 'Resouce']),
-        DF.add_field('author', 'string',
+        DF.add_field('authors', 'string',
             lambda r: None if not r.get('creators') else ', '.join(
                 (
                     '{name}'.format(**c)
@@ -87,7 +87,7 @@ def flow(*args):
                 title=[],
                 pubyear=['date'],
                 publisher=['institution', 'publication', 'publicationTitle'],
-                author=[],
+                authors=[],
                 life_areas=[],
                 notes=['abstractNote'],
                 languages=[],
