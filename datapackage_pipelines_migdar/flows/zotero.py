@@ -3,7 +3,7 @@ import dataflows as DF
 
 
 URL = 'https://api.zotero.org/groups/2095819/items?' + \
-    'key=l5A0BScYGE0eEVKBP1IwYfYR&limit=100&start={}'
+    'key=l5A0BScYGE0eEVKBP1IwYfYR&limit=100&start={}&include=data'
 session = requests.Session()
 
 
@@ -90,7 +90,7 @@ def flow(*args):
                 authors=[],
                 life_areas=[],
                 notes=['abstractNote'],
-                languages=[],
+                languages=['language'],
                 tags=[],
                 url=[],
                 migdar_id=['key'],
