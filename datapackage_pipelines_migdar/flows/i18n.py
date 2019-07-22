@@ -109,7 +109,8 @@ def split_and_translate(field, translations_key, delimiter=None, keyword=False):
                 if not val_ or len(val) < 3:
                     continue
                 best = process_fw.extractBests(val_, tx_keys,
-                            scorer=fuzz.UQRatio, limit=2, score_cutoff=90)
+                                               scorer=fuzz.UQRatio, limit=2,
+                                               score_cutoff=90)
                 if len(best) > 0:
                     if len(best) > 1:
                         if best[0][1] < 100:
@@ -117,20 +118,26 @@ def split_and_translate(field, translations_key, delimiter=None, keyword=False):
                                 print('POSSIBLE BAD TRANSLATION', field, val_, best)
                     translation = tx[best[0][0]]
                     for col, suffix in zip(COLS, SUFFIXES):
+                        key = '{}{}'.format(field, suffix)
                         to_val = translation[col]
                         if to_val:
                             to_val = clean(to_val)
                             if to_val:
-                                row['{}{}'.format(field, suffix)].append(to_val)
+                                if to_val not in row[key]:
+                                    row[key].append(to_val)
                             else:
-                                row['{}{}'.format(field, suffix)].append(val)
+                                if val not in row[key]:
+                                    row[key].append(val)
                         else:
-                            row['{}{}'.format(field, suffix)].append(val)
+                            if val not in row[key]:
+                                row[key].append(val)
                 else:
                     if val_ not in complained:
                         complained.add(val_)
                     for lang in SUFFIXES:
-                        row['{}{}'.format(field, lang)].append(val)
+                        key = '{}{}'.format(field, lang)
+                        if val not in row[key]:
+                            row[key].append(val)
             yield row
         if len(complained) > 0:
             print('COMPLAINTS FOR', field)
