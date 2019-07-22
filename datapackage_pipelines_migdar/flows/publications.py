@@ -110,14 +110,14 @@ years = re.compile('[12][0-9]{3}')
 
 def extract_year(record):
     pubyear = record.get('pubyear')
-    if isinstance(pubyear, str):
-        all_years = years.findall(pubyear)
-        if len(all_years):
-            return int(all_years[0])
-    elif isinstance(pubyear, int):
+    if isinstance(pubyear, int):
         return pubyear
     else:
-        print('YEAR?? %r' % pubyear)
+        all_years = years.findall(str(pubyear))
+        if len(all_years):
+            return int(all_years[0])
+        else:
+            print('YEAR?? %r' % pubyear)
 
 
 def base_flow():
