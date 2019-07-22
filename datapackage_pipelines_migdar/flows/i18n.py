@@ -30,17 +30,28 @@ def clean(x):
     return x.replace('\xa0', ' ').strip().lower()
 
 
+def extract_values(row):
+    values = [
+        v.strip()
+        for k, v in row.items()
+        if k.startswith('value') and v
+    ]
+    dvalues = [
+        '{} - {}'.format(v1, v2)
+        for v1 in values
+        for v2 in values
+        if v1 != v2
+    ]
+    return values + dvalues
+
+
 translations = {}
 for source, gid in sources.items():
     url = URL.format(gid)
     translations[source] = DF.Flow(
         DF.load(url),
         DF.add_field('values', 'array',
-                     default=lambda row: [
-                         v.strip()
-                         for k, v in row.items()
-                         if k.startswith('value') and v
-                     ]),
+                     default=extract_values),
         DF.add_field('hebara', 'string',
                      default=lambda row: '%{hebrew}s - %{arabic}s'.format(**row)),
         DF.filter_rows(lambda row: row['hebrew']),
