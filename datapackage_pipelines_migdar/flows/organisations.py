@@ -104,5 +104,6 @@ def flow(*_):
         es_dumper('orgs', REVISION, 'orgs_in_es')
     )
 
+
 if __name__ == '__main__':
     DF.Flow(org_flow, DF.printer()).process()

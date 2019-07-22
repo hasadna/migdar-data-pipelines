@@ -1,4 +1,3 @@
-import os
 import datetime
 
 SEARCH_IMPORT_FIELD_NAMES = ['Life Domains', 'Resource Type', 'Item Type', 'title', 'pubyear', 'publisher', 'author',

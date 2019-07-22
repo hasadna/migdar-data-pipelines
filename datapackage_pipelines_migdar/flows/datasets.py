@@ -9,37 +9,39 @@ from datapackage_pipelines_migdar.flows.i18n import split_and_translate
 from datapackage_pipelines_migdar.flows.constants import REVISION
 
 URLS = [
-    ['https://docs.google.com/spreadsheets/d/1uDZ-aPGie30IHaCqJOYgERl9hyVCKDm62TrBgkF3jgo/view#gid=',
-     [
-         '1648779124',
-         '1619687497',
-         '1938181021',
-         '1509914874',
-         '1073916128',
-         '1073916128',
-         '479978628',
-         '723318014',
-         '520697029',
-         '59161098',
-#          '1012201957',
-     ]
+    [
+        'https://docs.google.com/spreadsheets/d/1uDZ-aPGie30IHaCqJOYgERl9hyVCKDm62TrBgkF3jgo/view#gid=',
+        [
+            '1648779124',
+            '1619687497',
+            '1938181021',
+            '1509914874',
+            '1073916128',
+            '1073916128',
+            '479978628',
+            '723318014',
+            '520697029',
+            '59161098',
+            # '1012201957',
+        ]
     ],
-    ['https://docs.google.com/spreadsheets/d/1lgWPjyLflobl-KZKAlZieIVdyrFw2Q6q5Jf45e155Nw/view#gid=',
-     [
-         '1643825489',
-         '1427627014',
-         '266256601',
-         '1012229604',
-         '563852429',
-         '340008249',
-         '2025391121',
-         '424310605',
-         '1981367694',
-         '1131352277',
-         '2118420400',
-         '1701169040',
-         '1367638582',         
-     ]        
+    [
+        'https://docs.google.com/spreadsheets/d/1lgWPjyLflobl-KZKAlZieIVdyrFw2Q6q5Jf45e155Nw/view#gid=',
+        [
+            '1643825489',
+            '1427627014',
+            '266256601',
+            '1012229604',
+            '563852429',
+            '340008249',
+            '2025391121',
+            '424310605',
+            '1981367694',
+            '1131352277',
+            '2118420400',
+            '1701169040',
+            '1367638582',
+        ]
     ]
 ]
 
