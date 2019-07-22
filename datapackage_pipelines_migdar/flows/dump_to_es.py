@@ -106,7 +106,10 @@ class DumpToElasticSearch(ESDumper):
                 if 'revision' in config:
                     revision = config['revision']
                     doc_type = config['doc-type']
+                    resource_name = config['resource-name']
                     if doc_type == 'document':
+                        continue
+                    if resource_name != 'publications':
                         continue
                     logging.info('DELETING from "%s", "%s" items with revision < %d',
                                  index_name, doc_type, revision)
