@@ -1,5 +1,5 @@
 import os
-
+import datetime
 
 SEARCH_IMPORT_FIELD_NAMES = ['Life Domains', 'Resource Type', 'Item Type', 'title', 'pubyear', 'publisher', 'author',
                              'language_code', 'custom_metadata', 'publication_distribution_details', 'notes', 'tags',
@@ -10,4 +10,6 @@ PUBLICATIONS_DB_TABLE = '_elasticsearch_mirror__publications'
 PUBLICATIONS_KEY_PATTERN = 'publications/{migdar_id}'
 PUBLICATIONS_PAGE_TITLE_PATTERN = '{title}'
 
-REVISION = 36
+today = datetime.date.today().isocalendar()
+REVISION = today[0] * 100 + today[1]
+print('REVISION is {}'.format(REVISION))
