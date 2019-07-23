@@ -20,10 +20,12 @@ sources = dict([
 ])
 
 
+LANGS = ('hebrew', 'english', 'arabic')
+
+
 def clean_row(row):
-    row['hebrew'] = row['hebrew'] and row['hebrew'].strip()
-    row['english'] = row['english'] and row['english'].strip()
-    row['arabic'] = row['arabic'] and row['arabic'].strip()
+    for l in LANGS:
+        row[l] = row[l] and row[l].strip(0)
 
 
 def clean(x):
@@ -36,6 +38,12 @@ def extract_values(row):
         for k, v in row.items()
         if k.startswith('value') and v
     ]
+    values.extend(
+        row[k].strip()
+        for k in LANGS
+        if row.get(k)
+    )
+    values = list(set(values))
     dvalues = [
         '{} - {}'.format(v1, v2)
         for v1 in values
@@ -50,33 +58,24 @@ for source, gid in sources.items():
     url = URL.format(gid)
     translations[source] = DF.Flow(
         DF.load(url),
+        clean_row,
         DF.add_field('values', 'array',
                      default=extract_values),
-        DF.add_field('hebara', 'string',
-                     default=lambda row: '%{hebrew}s - %{arabic}s'.format(**row)),
         DF.filter_rows(lambda row: row['hebrew']),
-        clean_row,
-        DF.delete_fields(['value\\d'])
+        DF.select_fields(list(LANGS) + ['values'])
     ).results()[0][0]
     tx = {}
     complained = set()
     for row in translations[source]:
-        for v in row.values():
-            if not v:
-                continue
-            if isinstance(v, str):
-                v = clean(v)
-                if tx.get(v) not in (None, row):
-                    if v not in complained:
-                        complained.add(v)
-                tx[v] = row
-            else:
-                for vv in v:
-                    vv = clean(vv)
-                    if tx.get(vv) not in (None, row):
-                        if vv not in complained:
-                            complained.add(vv)
-                    tx[vv] = row
+        v = row.get('values')
+        if not v:
+            continue
+        for vv in v:
+            vv = clean(vv)
+            if tx.get(vv) not in (None, row):
+                if vv not in complained:
+                    complained.add(vv)
+            tx[vv] = row
     if len(complained) > 0:
         print('{}:'.format(source))
         for i in sorted(complained):
@@ -91,7 +90,7 @@ def split_and_translate(field, translations_key, delimiter=None, keyword=False):
 
     tx = translations[translations_key]
     tx_keys = list(tx.keys())
-   
+
     complained = set()
 
     def process(rows):
