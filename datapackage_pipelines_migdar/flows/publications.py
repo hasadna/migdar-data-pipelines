@@ -86,23 +86,23 @@ def get_sheets():
     return func
 
 
-def split_keyword_list(fieldname, delimiter=','):
-    def splitter():
-        def func(row):
-            if row.get(fieldname):
-                row[fieldname] = [
-                    x.strip() for x in row[fieldname].split(delimiter)
-                ]
-            else:
-                row[fieldname] = []
-        return func
+# def split_keyword_list(fieldname, delimiter=','):
+#     def splitter():
+#         def func(row):
+#             if row.get(fieldname):
+#                 row[fieldname] = [
+#                     x.strip() for x in row[fieldname].split(delimiter)
+#                 ]
+#             else:
+#                 row[fieldname] = []
+#         return func
 
-    steps = [
-        splitter(),
-        set_type(fieldname, type='array',
-                 **{'es:itemType': 'string', 'es:keyword': True})
-    ]
-    return Flow(*steps)
+#     steps = [
+#         splitter(),
+#         set_type(fieldname, type='array',
+#                  **{'es:itemType': 'string', 'es:keyword': True})
+#     ]
+#     return Flow(*steps)
 
 
 years = re.compile('[12][0-9]{3}')
@@ -173,20 +173,20 @@ def base_flow():
                 path='data/publications.csv'
             )
         ),
-        split_keyword_list('item_kind'),
-        split_keyword_list('life_areas'),
-        split_keyword_list('source_kind'),
-        split_keyword_list('languages', ' '),
-        split_keyword_list('tags'),
+        # split_keyword_list('item_kind'),
+        # split_keyword_list('life_areas'),
+        # split_keyword_list('source_kind'),
+        # split_keyword_list('languages', ' '),
+        # split_keyword_list('tags'),
         set_type('title',        **{'es:title': True}),
         set_type('authors',       **{'es:boost': True}),
         set_type('notes',        **{'es:hebrew': True}),
         set_type('publisher',    **{'es:boost': True}),
         add_field('year', 'integer',
                   default=extract_year),
-        split_and_translate('tags', 'tags', keyword=True),
-        split_and_translate('life_areas', 'life_areas', keyword=True),
-        split_and_translate('languages', 'languages', keyword=True),
+        split_and_translate('tags', 'tags', keyword=True, delimiter=','),
+        split_and_translate('life_areas', 'life_areas', keyword=True, delimiter=','),
+        split_and_translate('languages', 'languages', keyword=True, delimiter=' '),
         split_and_translate('source_kind', 'source_kind', keyword=True),
         split_and_translate('item_kind', 'item_kind', keyword=True),
         add_computed_field([
