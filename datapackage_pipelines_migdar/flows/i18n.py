@@ -25,7 +25,7 @@ LANGS = ('hebrew', 'english', 'arabic')
 
 def clean_row(row):
     for l in LANGS:
-        row[l] = row[l] and row[l].strip(0)
+        row[l] = row[l] and row[l].strip()
 
 
 def clean(x):
