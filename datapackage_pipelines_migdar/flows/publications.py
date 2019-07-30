@@ -194,6 +194,9 @@ def base_flow():
             {'operation': 'format', 'target': 'page_title',
              'with': PAGE_TITLE_PATTERN},
         ]),
+        add_field('title_kw', 'string',
+                  default=lambda row: row.get('title'),
+                  **{'es:keyword': True}),
     )
 
 

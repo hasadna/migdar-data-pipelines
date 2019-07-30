@@ -269,6 +269,9 @@ datasets_flow = DF.Flow(*[
             'chart_title', 'chart_title__ar', 'chart_title__en',
         ]
     ],
+    DF.add_field('title_kw', 'string',
+                 default=lambda row: row.get('chart_title'),
+                 **{'es:keyword': True}),
     DF.validate(),
     DF.update_resource(resources=None, name='datasets'),
 )

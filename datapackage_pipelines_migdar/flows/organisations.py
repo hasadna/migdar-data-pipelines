@@ -79,6 +79,9 @@ org_flow = DF.Flow(
         for f in ('languages', 'life_areas', 'tags', 'regions', 'org_kind',
                   'specialties', 'provided_services', 'target_audiences', 'compact_services')
     ],
+    DF.add_field('title_kw', 'string',
+                 default=lambda row: row.get('org_name'),
+                 **{'es:keyword': True}),
     DF.add_computed_field(
         target='doc_id',
         operation='format',
