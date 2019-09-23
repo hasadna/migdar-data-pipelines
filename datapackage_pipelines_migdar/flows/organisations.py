@@ -3,7 +3,7 @@ import dataflows as DF
 import tabulator
 from datapackage_pipelines_migdar.flows.dump_to_es import es_dumper
 from datapackage_pipelines_migdar.flows.i18n import \
-    split_and_translate, clean
+    split_and_translate, clean, fix_urls
 from datapackage_pipelines_migdar.flows.constants import REVISION
 
 
@@ -57,6 +57,7 @@ def fix_doc_id(rows):
 org_flow = DF.Flow(
     DF.load(ORGS_URL, name='orgs'), 
     DF.concatenate(headers, resources='orgs', target=dict(name='orgs')),
+    fix_urls(['org_website', 'org_facebook']),
     DF.add_field(
         'alt_names', 'array',
         default=lambda r: [

@@ -160,3 +160,16 @@ def split_and_translate(field, translations_key, delimiter=None, keyword=False):
         for res in package:
             yield process(res)
     return func
+
+
+def fix_urls(fields):
+    def func(row):
+        for f in fields:
+            v = row.get(f)
+            if isinstance(v, str):
+                v = v.strip()
+                if v.startswith('http'):
+                    continue
+                row[f] = 'https://' + v
+                print('FIXED __https://__{}'.format(v))
+    return func

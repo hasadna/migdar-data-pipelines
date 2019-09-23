@@ -5,7 +5,7 @@ import dataflows as DF
 from hashlib import md5
 from decimal import Decimal
 from datapackage_pipelines_migdar.flows.dump_to_es import es_dumper
-from datapackage_pipelines_migdar.flows.i18n import split_and_translate
+from datapackage_pipelines_migdar.flows.i18n import split_and_translate, fix_urls
 from datapackage_pipelines_migdar.flows.constants import REVISION
 
 URLS = [
@@ -167,6 +167,7 @@ datasets_flow = DF.Flow(*[
         year=[],
         value=[],
     ), target=dict(name='out')),
+    fix_urls(['source_url']),
     DF.add_field('order_index', 'integer'),
     lambda rows: ({**row, **{'order_index': i}} for i, row in enumerate(rows)),
     set_defaults,

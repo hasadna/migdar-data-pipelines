@@ -14,7 +14,7 @@ from dataflows import (
 )
 
 from datapackage_pipelines_migdar.flows.dump_to_es import es_dumper
-from datapackage_pipelines_migdar.flows.i18n import split_and_translate
+from datapackage_pipelines_migdar.flows.i18n import split_and_translate, fix_urls
 from datapackage_pipelines_migdar.flows.constants import REVISION
 
 
@@ -173,6 +173,7 @@ def base_flow():
                 path='data/publications.csv'
             )
         ),
+        fix_urls(['url']),
         # split_keyword_list('item_kind'),
         # split_keyword_list('life_areas'),
         # split_keyword_list('source_kind'),
