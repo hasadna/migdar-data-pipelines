@@ -120,6 +120,15 @@ def extract_year(record):
             print('YEAR?? %r' % pubyear)
 
 
+def fix_nones():
+    def func(row):
+        return dict(
+            (k, None if v == 'None' else v)
+            for k, v in row.items()
+        )
+    return func
+
+
 def base_flow():
     sources, *_ = Flow(
         list_gdrive(),
@@ -173,6 +182,7 @@ def base_flow():
                 path='data/publications.csv'
             )
         ),
+        fix_nones(),
         fix_urls(['url']),
         # split_keyword_list('item_kind'),
         # split_keyword_list('life_areas'),
