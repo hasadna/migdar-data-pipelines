@@ -161,6 +161,7 @@ def split_and_translate(field, translations_key, delimiter=None, keyword=False):
             yield process(res)
     return func
 
+lowercases = tuple(chr(x) for x in range(ord('a'), ord('z')+1))
 
 def fix_urls(fields):
     def func(row):
@@ -171,6 +172,8 @@ def fix_urls(fields):
                 if len(v) == 0:
                     continue
                 if v.startswith('http') or '://' in v:
+                    continue
+                if not v[0].lower() in lowercases:
                     continue
                 row[f] = 'http://' + v
                 print('FIXED __http://__{}'.format(v))
