@@ -168,6 +168,8 @@ def fix_urls(fields):
             v = row.get(f)
             if isinstance(v, str):
                 v = v.strip()
+                if len(v) == 0:
+                    continue
                 if v.startswith('http'):
                     continue
                 row[f] = 'https://' + v
