@@ -170,7 +170,7 @@ def fix_urls(fields):
                 v = v.strip()
                 if len(v) == 0:
                     continue
-                if v.startswith('http'):
+                if v.startswith('http') or '://' in v:
                     continue
                 row[f] = 'http://' + v
                 print('FIXED __http://__{}'.format(v))
