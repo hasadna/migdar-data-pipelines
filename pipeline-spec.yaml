@@ -88,3 +88,10 @@ publications:
     crontab: "1 1 * * *"
   pipeline:
   - flow: datapackage_pipelines_migdar.flows.publications
+
+
+sitemap:
+  schedule:
+    crontab: "4 4 * * *"
+  pipeline:
+  - flow: datapackage_pipelines_migdar.flows.sitemap
