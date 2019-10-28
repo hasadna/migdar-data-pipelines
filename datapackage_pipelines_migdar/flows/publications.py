@@ -60,6 +60,7 @@ def one(i):
 def get_sheets():
     def func(rows):
         for row in rows:
+            print('Attempting with %r' % row)
             wb = load_workbook(row['filename'])
             for sheet_name in wb.sheetnames:
                 if 'deleted' in sheet_name.strip().lower():
