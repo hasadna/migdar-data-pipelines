@@ -35,7 +35,7 @@ def flow(*_):
             ]
         ],
         DF.concatenate(dict(doc_id=[])),
-        DF.update_resource(**{'dpp:streaming': True})
+        DF.update_resource(**{'dpp:streaming': True}),
         registerSiteMaps,
         DF.printer()
     )
