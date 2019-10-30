@@ -75,6 +75,12 @@ datasets:
   pipeline:
   - flow: datapackage_pipelines_migdar.flows.datasets
 
+dataset-assets:
+  dependencies:
+    - pipeline: ./datasets
+  pipeline:
+  - flow: datapackage_pipelines_migdar.flows.dataset_assets
+
   
 zotero:
   schedule:

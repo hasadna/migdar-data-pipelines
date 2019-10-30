@@ -22,3 +22,5 @@ LICENSE
 README.md
 tox.ini
 *.secret.env
+./data/
+node_modules/
