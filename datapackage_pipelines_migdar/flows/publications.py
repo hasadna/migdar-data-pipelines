@@ -7,20 +7,16 @@ from google.oauth2 import service_account
 from googleapiclient.http import MediaIoBaseDownload
 from openpyxl import load_workbook
 import logging
-
 from dataflows import (
     Flow, printer, filter_rows, add_field, load,
     concatenate, set_type, add_computed_field
 )
-
 from datapackage_pipelines_migdar.flows.dump_to_es import es_dumper
 from datapackage_pipelines_migdar.flows.i18n import split_and_translate, fix_urls
 from datapackage_pipelines_migdar.flows.constants import REVISION
 
-
 KEY_PATTERN = 'publications/{migdar_id}'
 PAGE_TITLE_PATTERN = '{title}'
-
 
 SCOPES = ['https://www.googleapis.com/auth/drive']
 try:

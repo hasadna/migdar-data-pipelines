@@ -6,9 +6,7 @@ from datapackage_pipelines_migdar.flows.i18n import \
     split_and_translate, clean, fix_urls
 from datapackage_pipelines_migdar.flows.constants import REVISION
 
-
 ORGS_URL='https://docs.google.com/spreadsheets/d/1fWHl6rlvpqfCXoM1IVhqlY0SWQ_IYCWukuyCcTDwWjM/view'
-
 
 headers = {
  'org_name': ['שם מלא של הארגון - לתרגום או לתעתיק'],
