@@ -185,14 +185,16 @@ def es_dumper(resource_name, revision, path):
     return DF.Flow(
         update_pk('doc_id'),
         DF.add_field('revision', 'integer', default=revision),
-        DumpToElasticSearch({'migdar': [{'resource-name': resource_name,
-                                         'doc-type': resource_name,
-                                         'revision': revision}]})(),
+        DumpToElasticSearch({'migdar__' + resource_name:
+                [{'resource-name': resource_name,
+                  'doc-type': None,
+                  'revision': revision}]})(),
         DF.dump_to_path('data/{}'.format(path)),
         collate(revision),
-        DumpToElasticSearch({'migdar': [{'resource-name': resource_name,
-                                         'doc-type': 'document',
-                                         'revision': revision}]})(),
+        DumpToElasticSearch({'migdar__docs': 
+                [{'resource-name': resource_name,
+                  'doc-type': None,
+                  'revision': revision}]})(),
         DF.update_resource(None, **{'dpp:streaming': True}),
         DF.printer(),
     )
