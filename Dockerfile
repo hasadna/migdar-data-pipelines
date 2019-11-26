@@ -13,7 +13,7 @@ RUN python3 -m pip install -U https://github.com/datahq/dataflows/archive/master
 COPY setup.py /pipelines/
 RUN python3 -m pip install -e .
 
-ENV DPP_ELASTICSEARCH=localhost:19200
+ENV DATAFLOWS_ELASTICSEARCH=localhost:19200
 ENV CHROME_BIN="/usr/bin/chromium-browser"
 
 COPY datapackage_pipelines_migdar /pipelines/datapackage_pipelines_migdar

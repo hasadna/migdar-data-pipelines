@@ -83,25 +83,6 @@ def get_sheets():
     return func
 
 
-# def split_keyword_list(fieldname, delimiter=','):
-#     def splitter():
-#         def func(row):
-#             if row.get(fieldname):
-#                 row[fieldname] = [
-#                     x.strip() for x in row[fieldname].split(delimiter)
-#                 ]
-#             else:
-#                 row[fieldname] = []
-#         return func
-
-#     steps = [
-#         splitter(),
-#         set_type(fieldname, type='array',
-#                  **{'es:itemType': 'string', 'es:keyword': True})
-#     ]
-#     return Flow(*steps)
-
-
 years = re.compile('[12][0-9]{3}')
 
 
