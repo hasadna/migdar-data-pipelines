@@ -110,7 +110,10 @@ def fix_nones():
 def base_flow():
     sources, *_ = Flow(
         list_gdrive(),
-        filter_rows(lambda row: row['kind'] == 'drive#file' and row['mimeType'] == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
+        filter_rows(lambda row: (
+            row['kind'] == 'drive#file' and
+            row['mimeType'] == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )),
         add_field('filename', 'string',
                   default=lambda row: 'pubfiles/{modifiedTime}-{id}.xlsx'.format(**row)),
         download_files(),

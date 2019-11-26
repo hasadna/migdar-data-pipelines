@@ -88,12 +88,12 @@ def collate(revision):
         for row in rows:
             value = dict(
                 (k,v) for k,v in row.items()
-                if k not in ('doc_id', 'revision')
+                if k not in ('doc_id', 'revision', 'score')
             )
             yield dict(
                 doc_id=row['doc_id'],
                 revision=revision,
-                score=1,
+                score=row['score'],
                 value=value
             )
 
@@ -117,6 +117,7 @@ def es_dumper(resource_name, revision, path):
     return DF.Flow(
         update_pk('doc_id'),
         DF.add_field('revision', 'integer', default=revision),
+        DF.add_field('score', 'number', default=1),
         my_dump_to_es(
             indexes={
                 'migdar__' + resource_name: [
