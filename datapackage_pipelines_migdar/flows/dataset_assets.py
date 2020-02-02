@@ -14,7 +14,7 @@ def do_screenshot():
                 url = f'https://yodaat.org/{lang}card/{doc_id}'
                 outpath = os.path.join('data', lang + os.path.dirname(doc_id))
                 os.makedirs(outpath, exist_ok=True)
-                outpath = os.path.join('data', lang +doc_id + '.png')
+                outpath = os.path.join('data', lang + doc_id + '.png')
                 subprocess.call(['node', SCREENSHOT, url, outpath, '.card'])
         return []
     return func
