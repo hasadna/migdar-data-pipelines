@@ -10,7 +10,8 @@ const puppeteer = require('puppeteer');
     });
     const page = await browser.newPage();
     page.setViewport({width: 1300, height: 1200});
-    await page.goto(url);
+    await page.goto(url, {waitUntil: 'networkidle0'});
+    await page.evaluateHandle('document.fonts.ready');
     await page.waitForSelector(selector + ' svg');
 
     const rect = await page.evaluate(selector => {

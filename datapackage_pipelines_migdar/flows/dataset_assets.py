@@ -5,7 +5,6 @@ import dataflows as DF
 
 SCREENSHOT = os.path.join(os.path.dirname(__file__), 'node', 'screenshot.js')
 
-
 def do_screenshot():
     def func(rows):
         for row in rows:
