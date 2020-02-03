@@ -5,16 +5,18 @@ import dataflows as DF
 
 SCREENSHOT = os.path.join(os.path.dirname(__file__), 'node', 'screenshot.js')
 
+
 def do_screenshot():
     def func(rows):
         for row in rows:
             for lang in ['', 'ar/', 'en/']:
                 doc_id = row['doc_id']
-                url = f'https://yodaat.org/{lang}card/{doc_id}'
-                outpath = os.path.join('data', lang + os.path.dirname(doc_id))
-                os.makedirs(outpath, exist_ok=True)
-                outpath = os.path.join('data', lang + doc_id + '.png')
-                subprocess.call(['node', SCREENSHOT, url, outpath, '.card'])
+                for suffix in ['', '-share']:
+                    url = f'https://yodaat.org/{lang}card{suffix}/{doc_id}'
+                    outpath = os.path.join('data', lang + os.path.dirname(doc_id))
+                    os.makedirs(outpath, exist_ok=True)
+                    outpath = os.path.join('data', lang + doc_id + suffix + '.png')
+                    subprocess.call(['node', SCREENSHOT, url, outpath, '.card'])
         return []
     return func
 
