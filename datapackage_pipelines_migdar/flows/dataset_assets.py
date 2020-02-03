@@ -13,10 +13,13 @@ def do_screenshot():
                 doc_id = row['doc_id']
                 for suffix in ['', '-share']:
                     url = f'https://yodaat.org/{lang}card{suffix}/{doc_id}'
-                    outpath = os.path.join('data', lang + os.path.dirname(doc_id))
+                    outpath = os.path.join('data',
+                                           lang + os.path.dirname(doc_id))
                     os.makedirs(outpath, exist_ok=True)
-                    outpath = os.path.join('data', lang + doc_id + suffix + '.png')
-                    subprocess.call(['node', SCREENSHOT, url, outpath, '.card'])
+                    outpath = os.path.join('data',
+                                           lang + doc_id + suffix + '.png')
+                    subprocess.call(['node', SCREENSHOT, url,
+                                     outpath, '.card'])
         return []
     return func
 
@@ -30,4 +33,5 @@ def flow(*_, path='data/datasets_in_es'):
 
 
 if __name__ == '__main__':
-    flow(path='https://api.yodaat.org/data/datasets_in_es').process()
+    flow(path='https://api.yodaat.org/data/datasets_in_es')\
+        .process()
