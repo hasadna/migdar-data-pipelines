@@ -70,7 +70,7 @@ def set_defaults(row):
         for lang in ['', '__ar']:
             f = 'chart_{}{}'.format(x, lang)
             row[f] = row.get(f) or row.get('series_{}{}'.format(x, lang))
-            
+
 def extrapulate_years(row):
     ey = row['extrapulation_years']
     out = []
@@ -89,6 +89,7 @@ def fix_values(rows):
     for row in rows:
         if row.get('value'):
             row['value'] = row['value'].replace('%', '')
+            row['series_title'] = row['series_title'].strip() or row['gender']
             yield row
 
 CHART_FIELDS = [
@@ -98,6 +99,7 @@ CHART_FIELDS = [
     'chart_title', 'chart_title__ar', 'chart_title__en',
     'chart_abstract', 'chart_abstract__ar', 'chart_abstract__en'
 ]
+
 SERIES_FIELDS = [
     'series_title', 'series_title__ar', 'series_title__en',
     'series_abstract', 'series_abstract__ar', 'series_abstract__en',
