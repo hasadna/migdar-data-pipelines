@@ -66,6 +66,7 @@ def transpose(sheet):
             break
 
 def set_defaults(row):
+    row['series_title'] = row.get('series_title') or row['gender']
     for x in ['title', 'abstract']:
         for lang in ['', '__ar']:
             f = 'chart_{}{}'.format(x, lang)
@@ -89,7 +90,6 @@ def fix_values(rows):
     for row in rows:
         if row.get('value'):
             row['value'] = row['value'].replace('%', '')
-            row['series_title'] = row['series_title'].strip() or row['gender']
             yield row
 
 CHART_FIELDS = [
