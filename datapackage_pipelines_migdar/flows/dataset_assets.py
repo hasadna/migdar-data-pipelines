@@ -27,7 +27,10 @@ def write_excel():
             ws[cell] = row.get(field, row['series'][0].get(field, ''))
         source_range = set()
         for x, series in enumerate(row['series']):
-            ws.cell(EXCEL_SERIES_ROW, x+2, series['gender'])
+            gender = series.get('gender', '')
+            if not gender:
+                print('WARNING - no gender for %r' % row)
+            ws.cell(EXCEL_SERIES_ROW, x+2, gender)
             source_range.update(d['x'] for d in series['dataset'])
         source_range = dict((v, i + 1) for i, v in enumerate(sorted(source_range)))
         for value, y in source_range.items():
