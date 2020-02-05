@@ -6,15 +6,36 @@ URL = 'https://api.zotero.org/groups/2095819/items?' + \
     'key=l5A0BScYGE0eEVKBP1IwYfYR&limit=100&start={}&include=data'
 session = requests.Session()
 
+MAPPING = dict(
+                title=[],
+                pubyear=['date'],
+                publisher=['institution', 'publication', 'publicationTitle'],
+                authors=[],
+                life_areas=[],
+                notes=['abstractNote'],
+                languages=['language'],
+                tags=[],
+                url=[],
+                migdar_id=['key'],
+                item_kind=['reportType'],
+                source_kind=[],
+            )
+
+FIELDS = set(
+    v
+    for k in MAPPING.keys()
+    for v in MAPPING.get(k) + [k]
+)
+
 
 def get(start=0):
     start = 0
+    yield dict((f, None) for f in FIELDS)
     while True:
         results = session.get(URL.format(start)).json()
         for i, res in enumerate(results):
-            for creator in res['data'].get('creators', []):
-                if 'firstName' not in creator and 'name' not in creator:
-                    print(creator)
+            # for k in res['data'].keys():
+            #     assert k in FIELDS, repr(sorted(set(res['data'].keys()).union(FIELDS)))
             yield res['data']
         if len(results) < 100:
             break
@@ -64,10 +85,19 @@ def extract_tags(field='tags', prefixes=None):
             verify_tags,
         )
 
+def debug(field):
+    import pprint
+    def func(row):
+        if row[field] in ('QEPCFZQR', '9VAF95ZC'):
+            pprint.pprint(row)
+    return func
+
 
 def flow(*args):
     return DF.Flow(
         get(),
+        # debug('key'),
+        DF.filter_rows(lambda row: row['key']),
         simplify_tags,
         extract_tags('life_areas', ['Domain']),
         extract_tags('source_kind', ['Source', 'Resource', 'Resouce']),
@@ -82,23 +112,12 @@ def flow(*args):
                 if c.get('creatorType') == 'author'
             )
         ),
+        # debug('key'),
         DF.concatenate(
-            dict(
-                title=[],
-                pubyear=['date'],
-                publisher=['institution', 'publication', 'publicationTitle'],
-                authors=[],
-                life_areas=[],
-                notes=['abstractNote'],
-                languages=['language'],
-                tags=[],
-                url=[],
-                migdar_id=['key'],
-                item_kind=['reportType'],
-                source_kind=[],
-            ),
+            MAPPING,
             target={'name': 'zotero', 'path': 'zotero.csv'}
         ),
+        # debug('migdar_id'),
         DF.dump_to_path('data/zotero'),
         DF.update_resource(None, **{'dpp:streaming': True})
     )
@@ -109,6 +128,10 @@ if __name__ == '__main__':
         flow(),
         # DF.printer(num_rows=1)
     ).results()
-    import pprint
+    for x in res[0]:
+        if x['migdar_id'] in ('QEPCFZQR', '9VAF95ZC'):
+                print(x)
+
+    # import pprint
     # pprint.pprint(sorted(res[0][0].keys()))
     # pprint.pprint(res[0][:10], width=120)
