@@ -1,6 +1,6 @@
 plyvel
 dataflows-elasticsearch
-dataflows>=0.0.57
+dataflows>=0.0.68
 gunicorn
 fuzzywuzzy[speedup]
 google-api-python-client
