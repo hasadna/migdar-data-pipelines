@@ -17,7 +17,7 @@ MAPPING = dict(
                 tags=[],
                 url=[],
                 migdar_id=['key'],
-                item_kind=['reportType'],
+                item_kind=['reportType', 'itemType'],
                 source_kind=[],
             )
 
