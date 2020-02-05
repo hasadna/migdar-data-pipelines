@@ -34,9 +34,7 @@ def get(start=0):
     while True:
         results = session.get(URL.format(start)).json()
         for i, res in enumerate(results):
-            # for k in res['data'].keys():
-            #     assert k in FIELDS, repr(sorted(set(res['data'].keys()).union(FIELDS)))
-            yield res['data']
+            yield dict((k, v) for k, v in res['data'].items() if v is not None)
         if len(results) < 100:
             break
         start += 100
@@ -85,18 +83,10 @@ def extract_tags(field='tags', prefixes=None):
             verify_tags,
         )
 
-def debug(field):
-    import pprint
-    def func(row):
-        if row[field] in ('QEPCFZQR', '9VAF95ZC'):
-            pprint.pprint(row)
-    return func
-
 
 def flow(*args):
     return DF.Flow(
         get(),
-        # debug('key'),
         DF.filter_rows(lambda row: row['key']),
         simplify_tags,
         extract_tags('life_areas', ['Domain']),
@@ -112,12 +102,10 @@ def flow(*args):
                 if c.get('creatorType') == 'author'
             )
         ),
-        # debug('key'),
         DF.concatenate(
             MAPPING,
             target={'name': 'zotero', 'path': 'zotero.csv'}
         ),
-        # debug('migdar_id'),
         DF.dump_to_path('data/zotero'),
         DF.update_resource(None, **{'dpp:streaming': True})
     )
@@ -128,9 +116,9 @@ if __name__ == '__main__':
         flow(),
         # DF.printer(num_rows=1)
     ).results()
-    for x in res[0]:
-        if x['migdar_id'] in ('QEPCFZQR', '9VAF95ZC'):
-                print(x)
+    # for x in res[0]:
+    #     if x['migdar_id'] in ('QEPCFZQR', '9VAF95ZC'):
+    #             print(x)
 
     # import pprint
     # pprint.pprint(sorted(res[0][0].keys()))
