@@ -4,3 +4,4 @@ dataflows>=0.0.57
 gunicorn
 fuzzywuzzy[speedup]
 google-api-python-client
+openpyxl==3.0.0
