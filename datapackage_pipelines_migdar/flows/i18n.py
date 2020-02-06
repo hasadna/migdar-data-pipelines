@@ -90,6 +90,7 @@ def split_and_translate(field, translations_key, delimiter=None, keyword=False):
 
     tx = translations[translations_key]
     tx_keys = list(tx.keys())
+    tx_keys_set = set(tx_keys)
 
     complained = set()
 
@@ -107,9 +108,12 @@ def split_and_translate(field, translations_key, delimiter=None, keyword=False):
                 val_ = clean(val)
                 if not val_ or len(val) < 3:
                     continue
-                best = process_fw.extractBests(val_, tx_keys,
-                                               scorer=fuzz.UQRatio, limit=2,
-                                               score_cutoff=90)
+                if val_ in tx_keys_set:
+                    best = [[val_]]
+                else:
+                    best = process_fw.extractBests(val_, tx_keys,
+                                                   scorer=fuzz.UQRatio, limit=2,
+                                                   score_cutoff=90)
                 if len(best) > 0:
                     if len(best) > 1:
                         if best[0][1] < 100:

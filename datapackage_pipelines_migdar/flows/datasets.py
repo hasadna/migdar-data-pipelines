@@ -88,11 +88,40 @@ def extrapulate_years(row):
         out = [str(x) for x in sorted(out)]
     row['extrapulation_years'] = out
 
+
 def fix_values(rows):
     for row in rows:
         if row.get('value'):
             row['value'] = row['value'].replace('%', '')
             yield row
+
+
+def fix_units(row):
+    assert row['units'] in (
+        'אחוזים עד 1', 'אחוזים עד 100', 'מספר', 'ש"ח', 'שנים', 'מספר עד 1'
+    ), 'BAD UNITS ' + repr(row)
+    if row['units'] == 'אחוזים עד 1':
+        assert 0 <= row['value'] <= 1
+        row['value'] *= 100
+        row['units'] = 'אחוזים עד 100'
+
+
+def verify_percents(row):
+    if row['units'] != 'מספר עד 1' and all(0 <= x <= 1 for x in row['value'] if isinstance(x, Decimal)):
+        print('BAD UNITS (PROBABLY):')
+        print(row['kind'])
+        print(row['chart_title'])
+        print(row['series_title'])
+        print(row['units'])
+        print(row['value'])
+    if row['units'] == 'מספר עד 1' and not all(0 <= x <= 1 for x in row['value'] if isinstance(x, Decimal)):
+        print('BAD UNITS (PROBABLY 2):')
+        print(row['kind'])
+        print(row['chart_title'])
+        print(row['series_title'])
+        print(row['units'])
+        print(row['value'])
+
 
 CHART_FIELDS = [
     'kind', 'gender_index_dimension', 'life_areas', 'item_type', 'tags', 'language',
@@ -162,7 +191,7 @@ datasets_flow = DF.Flow(*[
             'לינק למקור הנתונים',
             'מקור הנתונים - לינק:',
         ],
-        gender=['מגדר','מגדר:'],
+        gender=['מגדר','מגדר:','שם הסדרה'],
         units=['יחידות'],
         extrapulation_years=[
          'שנת אקסטרפולציה (אם קיימת, מהשנה שבה עושות אקסטרפולציה):',
@@ -179,6 +208,7 @@ datasets_flow = DF.Flow(*[
     extrapulate_years,
     fix_values,
     DF.set_type('value', groupChar=',', bareNumber=True),
+    fix_units,
     DF.set_type('extrapulation_years', type='array', **{'es:itemType': 'string'}),
     DF.validate(),
     DF.add_computed_field([
@@ -208,6 +238,7 @@ datasets_flow = DF.Flow(*[
              ]
             )
     ),
+    verify_percents,
     DF.add_computed_field([
         dict(target=dict(
                 name='dataset',
@@ -256,7 +287,7 @@ datasets_flow = DF.Flow(*[
     DF.delete_fields(SERIES_FIELDS + ['dataset']),
     split_and_translate('tags', 'tags', delimiter=',', keyword=True),
     split_and_translate('life_areas', 'life_areas', delimiter=',', keyword=True),
-    split_and_translate('language', 'languages', keyword=True),
+    split_and_translate('language', 'languages', delimiter=',', keyword=True),
     DF.add_computed_field(
         target=dict(name='doc_id', type='string'),
         operation=lambda row: (
@@ -291,4 +322,4 @@ def flow(*_):
 
 
 if __name__ == '__main__':
-    DF.Flow(datasets_flow, DF.printer()).process()
+    DF.Flow(datasets_flow).process()
