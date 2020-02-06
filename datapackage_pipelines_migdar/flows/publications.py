@@ -20,15 +20,19 @@ PAGE_TITLE_PATTERN = '{title}'
 
 SCOPES = ['https://www.googleapis.com/auth/drive']
 try:
-    credentials = service_account.Credentials.from_service_account_file('/migdar-gdrive/secret-g-service-account.json', scopes=SCOPES)
+    credentials = service_account.Credentials.from_service_account_file(
+        '/migdar-gdrive/secret-g-service-account.json', scopes=SCOPES)
 except Exception:
     logging.exception('Failed to open creds!')
-    credentials = service_account.Credentials.from_service_account_file('gdrive_creds.json', scopes=SCOPES)
+    credentials = service_account.Credentials.from_service_account_file(
+        'gdrive_creds.json', scopes=SCOPES)
 drive_service = googleapiclient.discovery.build('drive', 'v3', credentials=credentials)
 
 
 def list_gdrive():
-    results = drive_service.files().list(q="'16bSopg9nlQDBN8gsjW712xuBWy16gPW0' in parents", fields='files(id,kind,name,mimeType,modifiedTime)').execute()
+    results = drive_service.files().list(
+        q="'16bSopg9nlQDBN8gsjW712xuBWy16gPW0' in parents",
+        fields='files(id,kind,name,mimeType,modifiedTime)').execute()
     yield from results.get('files', [])
 
 
@@ -69,7 +73,9 @@ def get_sheets():
                     headers = [x.value for x in cells]
                     if not any(headers):
                         continue
-                    assert one(x in headers for x in ['Domain', 'Life Domains']), 'DOMAIN %r' % list(zip(headers, [x.value for x in list(sheet.rows)[i+1]]))
+                    assert one(x in headers
+                               for x in ['Domain', 'Life Domains']),\
+                        'DOMAIN %r' % list(zip(headers, [x.value for x in list(sheet.rows)[i+1]]))
                     if 'migdar_id' not in headers:
                         print('BAD HEADERS', row['name'], sheet_name)
                         continue
