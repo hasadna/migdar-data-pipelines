@@ -19,6 +19,8 @@ MAPPING = dict(
                 migdar_id=['key'],
                 item_kind=['reportType', 'itemType'],
                 source_kind=[],
+                volume=[],
+                creators=[],
             )
 
 FIELDS = set(
