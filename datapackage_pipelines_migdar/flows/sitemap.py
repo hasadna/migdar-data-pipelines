@@ -2,6 +2,8 @@ import dataflows as DF
 import xml.etree.cElementTree as ET
 import datetime
 
+from datapackage_pipelines_migdar.flows.i18n import translations
+
 
 def registerSiteMaps(rows):
     root = ET.Element('urlset')
@@ -10,8 +12,7 @@ def registerSiteMaps(rows):
     root.attrib['xmlns'] = 'http://www.sitemaps.org/schemas/sitemap/0.9'
 
     for row in rows:
-        doc_id = row['doc_id']
-        url = 'https://yodaat.org/item/' + doc_id
+        url = row['url']
         dt = datetime.datetime.now().strftime('%Y-%m-%d')
         doc = ET.SubElement(root, 'url')
         ET.SubElement(doc, 'loc').text = url
@@ -35,8 +36,13 @@ def flow(*_):
             ]
         ],
         DF.concatenate(dict(doc_id=[])),
-        DF.update_resource(-1, **{'dpp:streaming': True}),
+        DF.add_field('url', 'string', lambda row: 'https://yodaat.org/item/' + row['doc_id'], resources=-1),
+        (dict(doc_id=k) for k in sorted({v['hebrew'] for v in translations['tags'].values()})),
+        DF.add_field('url', 'string', lambda row: 'https://yodaat.org/search?tag=%s&kind=all&filters={}&sortOrder=-year' % row['doc_id'], resources=-1),
+        DF.concatenate(dict(url=[])),
         registerSiteMaps,
+
+        DF.update_resource(-1, **{'dpp:streaming': True}),
         DF.printer()
     )
 
