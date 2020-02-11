@@ -22,27 +22,44 @@ def registerSiteMaps(rows):
         yield row
 
     tree = ET.ElementTree(root)
-    tree.write('data/sitemap.xml', encoding='utf-8', xml_declaration=True)
+    tree.write('data/sitemap.{}.xml'.format(rows.res.name),
+                encoding='utf-8', xml_declaration=True)
 
 
-def flow(*_):
+def lang_flow(lang, prefix):
     return DF.Flow(
         *[
-            DF.load('https://api.yodaat.org/data/{}_in_es/data/{}.csv'.format(x, y))
+            DF.Flow(
+                DF.load('https://api.yodaat.org/data/{}_in_es/data/{}.csv'.format(x, y), name='{}-{}'.format(x, lang)),
+                DF.add_field('url', 'string',
+                             lambda row: 'https://yodaat.org/{}item/{}'.format(
+                                 prefix, row['doc_id']
+                             ), resources=-1),
+            )
             for x, y in [
                 ('publications', 'publications'),
                 ('orgs', 'orgs'),
                 ('datasets', 'out')
             ]
         ],
-        DF.concatenate(dict(doc_id=[])),
-        DF.add_field('url', 'string', lambda row: 'https://yodaat.org/item/' + row['doc_id'], resources=-1),
-        (dict(doc_id=k) for k in sorted({v['hebrew'] for v in translations['tags'].values()})),
-        DF.add_field('url', 'string', lambda row: 'https://yodaat.org/search?tag=%s&kind=all&filters={}&sortOrder=-year' % row['doc_id'], resources=-1),
-        DF.concatenate(dict(url=[])),
-        registerSiteMaps,
+        (dict(doc_id=k) for k in translations['tags'].values()),
+        DF.update_resource(-1, name='tags-{}'.format(lang)),
+        DF.add_field('url', 'string',
+                     lambda row: 'https://yodaat.org/{}search?tag={}&itag={}&kind=all&filters={{}}&sortOrder=-year'.format(
+                         prefix, row['doc_id']['hebrew'], row['doc_id'][lang]
+                     ), resources=-1),
+    )
 
-        DF.update_resource(-1, **{'dpp:streaming': True}),
+
+def flow(*_):
+    return DF.Flow(
+        lang_flow('hebrew', ''),
+        lang_flow('english', 'en/'),
+        lang_flow('arabic', 'ar/'),
+
+        registerSiteMaps,
+        DF.select_fields(['url']),
+        DF.update_resource(None, **{'dpp:streaming': True}),
         DF.printer()
     )
 
