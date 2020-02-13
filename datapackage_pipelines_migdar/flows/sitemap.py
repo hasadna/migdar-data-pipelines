@@ -52,6 +52,13 @@ def lang_flow(lang, prefix):
 
 
 def flow(*_):
+    with open('data/sitemap.xml', 'w') as index:
+        index.write("""<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n""")
+        for kind in ('publications', 'orgs', 'datasets'):
+            for lang in ('hebrew', 'english', 'arabic'):
+                index.write("""<sitemap><loc>https://api.yodaat.org/data/sitemap.{}-{}.xml</loc></sitemap>\n""".format(kind, lang))
+        index.write("""</sitemapindex>""")
     return DF.Flow(
         lang_flow('hebrew', ''),
         lang_flow('english', 'en/'),
