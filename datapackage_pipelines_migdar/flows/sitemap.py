@@ -42,7 +42,7 @@ def lang_flow(lang, prefix):
                 ('datasets', 'out')
             ]
         ],
-        (dict(doc_id=k) for k in translations['tags'].values()),
+        (dict(doc_id=k) for k in sorted(set(translations['tags'].values()))),
         DF.update_resource(-1, name='tags-{}'.format(lang)),
         DF.add_field('url', 'string',
                      lambda row: 'https://yodaat.org/{}search?tag={}&itag={}&kind=all&filters={{}}&sortOrder=-year'.format(
@@ -55,7 +55,7 @@ def flow(*_):
     with open('data/sitemap.xml', 'w') as index:
         index.write("""<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n""")
-        for kind in ('publications', 'orgs', 'datasets'):
+        for kind in ('publications', 'orgs', 'datasets', 'tags'):
             for lang in ('hebrew', 'english', 'arabic'):
                 index.write("""<sitemap><loc>https://api.yodaat.org/data/sitemap.{}-{}.xml</loc></sitemap>\n""".format(kind, lang))
         index.write("""</sitemapindex>""")
