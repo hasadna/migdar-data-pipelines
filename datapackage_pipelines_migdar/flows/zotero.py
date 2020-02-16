@@ -17,7 +17,7 @@ MAPPING = dict(
                 tags=[],
                 url=[],
                 migdar_id=['key'],
-                item_kind=['reportType', 'itemType'],
+                item_kind=[],
                 source_kind=[],
                 volume=[],
                 creators=[],
@@ -104,6 +104,8 @@ def flow(*args):
                 if c.get('creatorType') == 'author'
             )
         ),
+        DF.add_field('item_kind', 'string',
+                     lambda r: r.get('reportType') or r.get('itemKind')),
         DF.concatenate(
             MAPPING,
             target={'name': 'zotero', 'path': 'zotero.csv'}
