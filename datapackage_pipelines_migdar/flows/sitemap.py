@@ -27,6 +27,12 @@ def registerSiteMaps(rows):
 
 
 def lang_flow(lang, prefix):
+
+    tags = [dict(doc_id=list(k)) for k in sorted(set(
+            (prefix, x['hebrew'], x[lang])
+            for x in translations['tags'].values()
+        ))]
+
     return DF.Flow(
         *[
             DF.Flow(
@@ -42,15 +48,11 @@ def lang_flow(lang, prefix):
                 ('datasets', 'out')
             ]
         ],
-        (dict(doc_id=k) for k in sorted(
-            set((x['hebrew'], x[lang])
-                for x in translations['tags'].values())
-        )),
-        DF.update_resource(-1, name='tags-{}'.format(lang)),
+        tags,
         DF.add_field('url', 'string',
-                     lambda row: 'https://yodaat.org/{}search?tag={}&itag={}&kind=all&filters={{}}&sortOrder=-year'.format(
-                         prefix, row['doc_id'][0], row['doc_id'][1]
-                     ), resources=-1),
+                     lambda row: 'https://yodaat.org/{}search?tag={}&itag={}&kind=all&filters={{}}&sortOrder=-year'.format(*row['doc_id']),
+                     resources=-1),
+        DF.update_resource(-1, name='tags-{}'.format(lang)),
     )
 
 
