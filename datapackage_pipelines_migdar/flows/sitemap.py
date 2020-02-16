@@ -42,11 +42,14 @@ def lang_flow(lang, prefix):
                 ('datasets', 'out')
             ]
         ],
-        (dict(doc_id=k) for k in sorted(set(translations['tags'].values()))),
+        (dict(doc_id=k) for k in sorted(
+            set((x['hebrew'], x['lang'])
+                 for x in translations['tags'].values())
+        )),
         DF.update_resource(-1, name='tags-{}'.format(lang)),
         DF.add_field('url', 'string',
                      lambda row: 'https://yodaat.org/{}search?tag={}&itag={}&kind=all&filters={{}}&sortOrder=-year'.format(
-                         prefix, row['doc_id']['hebrew'], row['doc_id'][lang]
+                         prefix, row['doc_id'][0], row['doc_id'][1]
                      ), resources=-1),
     )
 
