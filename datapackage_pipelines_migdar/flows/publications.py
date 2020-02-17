@@ -157,12 +157,6 @@ def base_flow():
                 'authors': ['author'],
                 'url': ['URL'],
 
-                # 'publication_distribution_details',
-                # 'custom_metadata',
-                # 'physical_description',
-                # 'bib_place_publisher_date',
-                # 'bib_standard_technical_report_number',
-
             },
             target=dict(
                 name='publications',
@@ -171,11 +165,6 @@ def base_flow():
         ),
         fix_nones(),
         fix_urls(['url']),
-        # split_keyword_list('item_kind'),
-        # split_keyword_list('life_areas'),
-        # split_keyword_list('source_kind'),
-        # split_keyword_list('languages', ' '),
-        # split_keyword_list('tags'),
         set_type('title',        **{'es:title': True}),
         set_type('authors',       **{'es:boost': True}),
         set_type('notes',        **{'es:hebrew': True}),
