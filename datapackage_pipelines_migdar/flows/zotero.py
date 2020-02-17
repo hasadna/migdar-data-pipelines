@@ -28,6 +28,7 @@ FIELDS = set(
     for k in MAPPING.keys()
     for v in MAPPING.get(k) + [k]
 )
+FIELDS.update(['reportType', 'itemKind'])
 
 
 def get(start=0):
