@@ -91,6 +91,9 @@ def extrapulate_years(row):
 
 def fix_values(rows):
     for row in rows:
+        if not row.get('chart_title'):
+            print('PROBABLY BAD LINE %r' % row)
+            continue
         if row.get('value'):
             row['value'] = row['value'].replace('%', '')
             yield row
