@@ -131,7 +131,8 @@ CHART_FIELDS = [
     'author', 'author__ar', 'author__en',
     'institution', 'institution__ar', 'institution__en',
     'chart_title', 'chart_title__ar', 'chart_title__en',
-    'chart_abstract', 'chart_abstract__ar', 'chart_abstract__en'
+    'chart_abstract', 'chart_abstract__ar', 'chart_abstract__en',
+    'last_updated_at', 'chart_type', 'full_data_source'
 ]
 
 SERIES_FIELDS = [
@@ -142,68 +143,102 @@ SERIES_FIELDS = [
     'source_url', 'units', 'order_index',
 ]
 
+FIELD_MAPPING = dict(
+    kind=['אזור באתר:'],
+    gender_index_dimension=['ממד במדד המגדר'],
+    life_area1=['תחום חיים1 ביודעת'],
+    life_area2=['תחום חיים2 ביודעת'],
+    life_area3=['תחום חיים3 ביודעת'],
+    author=['Author'],
+    author__ar=['מחברת בערבית'],
+    author__en=['מחברת באנגלית'],
+    institution=['Institution'],
+    institution__ar=['מוסד בערבית'],
+    institution__en=['מוסד באנגלית'],
+    item_type=['Item type'],
+    tags=['Tags'],
+    language=[],
+    chart_title=['כותרת התרשים (נשים וגברים ביחד):', 'כותרת התרשים בעברית'],
+    chart_title__ar=['כותרת התרשים בערבית'],
+    chart_title__en=['כותרת התרשים באנגלית'],
+    chart_abstract=['אבסטרקט של התרשים', 'אבסטרקט בעברית'],
+    chart_abstract__ar=['אבסטרקט התרשים בערבית', 'אבסטרקט בערבית'],
+    chart_abstract__en=['אבסטרקט התרשים באנגלית', 'אבסטרקט באנגלית'],
+    series_title=['כותרת סדרת הנתונים (נשים או גברים):'],
+    series_title__ar=['כותרת הסידרה בערבית'],
+    series_title__en=['כותרת הסידרה באנגלית'],
+    series_abstract=[
+        'אבסטרקט של סדרת הנתונים (נשים או גברים)',            
+    ],
+    series_abstract__ar=['אבסטרקט הסידרה בערבית'],
+    series_abstract__en=['אבסטרקט הסידרה באנגלית'],
+    source_description=[
+        'מקור הנתונים',
+        'מקור הנתונים שיופיע מתחת לתרשים',
+        'מקור הנתונים בעברית',
+    ],
+    source_description__ar=['מקור הנתונים בערבית'],
+    source_description__en=['מקור הנתונים באנגלית', 'מקור הנתונים  באנגלית'],
+    source_detail_description=[
+        'מקור הנתונים - כותרת הלוח',
+        'פירוט נוסף על מקור הנתונים (רלבנטי רק כאשר אין לינק למקור הנתונים)'
+    ],
+    source_url=[
+        'לינק למקור הנתונים',
+        'מקור הנתונים - לינק:',
+        'קישור למקור הנתונים',
+    ],
+    full_data_source=[
+        'קישור לקובץ הנתונים המלא ביודעת'
+    ],
+    gender=['מגדר', 'מגדר:', 'שם הסדרה', 'שם הסידרה', 'שם הסידרה:', 'שם הסידרה בעברית'],
+    gender__ar=['שם הסידרה בערבית', 'מגדר בתרגום לערבית', 'מגדר בערבית'],
+    gender__en=['שם הסידרה באנגלית', 'מגדר בתרגום לאנגלית', 'מגדר באנגלית'],
+    units=['יחידות'],
+    extrapulation_years=[
+        'שנת אקסטרפולציה (אם קיימת, מהשנה שבה עושות אקסטרפולציה):',
+        'שנת אקסטרפולציה (טווח שנים או שנה ספציפית, או שנת התחלה):',
+        'שנת אקסטרפולציה (טווח שנים או שנת התחלה):',            
+    ],
+    chart_type=['סוג התרשים', 'סוג תרשים'],
+    last_updated_at=['תאריך עדכון אחרון'],
+    year=[],
+    value=[],
+)
+
+
+def verify_unused_fields():
+    fields = []
+    IGNORED = [
+        'צבע קו התרשים',
+        'יחידת המדידה',
+    ]
+    for k, v in FIELD_MAPPING.items():
+        fields.extend(v)
+        fields.append(k)
+
+    def func(rows):
+        for i, row in enumerate(rows):
+            if i == 0:
+                for k in row.keys():
+                    if k not in fields and k not in IGNORED:
+                        print('UNUSED FIELD in %s: %s' % (rows.res.name, k))
+            yield row
+
+    return func
+
+
 datasets_flow = DF.Flow(*[
         transpose(sheet)
         for sheet in sheets
     ],
     DF.unpivot(
-        [{'name': '([0-9/]+)', 'keys': {'year': '\\1'}}],
+        [{'name': '([0-9/]+.+)', 'keys': {'year': '\\1'}}],
         [{'name': 'year', 'type': 'string'}],
         {'name': 'value', 'type': 'number'},
     ),
-    DF.concatenate(dict(
-        kind=['אזור באתר:'],
-        gender_index_dimension=['ממד במדד המגדר'],
-        life_area1=['תחום חיים1 ביודעת'],
-        life_area2=['תחום חיים2 ביודעת'],
-        life_area3=['תחום חיים3 ביודעת'],
-        author=['Author'],
-        author__ar=['מחברת בערבית'],
-        author__en=['מחברת באנגלית'],
-        institution=['Institution'],
-        institution__ar=['מוסד בערבית'],
-        institution__en=['מוסד באנגלית'],
-        item_type=['Item type'],
-        tags=['Tags'],
-        language=[],
-        chart_title=['כותרת התרשים (נשים וגברים ביחד):', ],
-        chart_title__ar=['כותרת התרשים בערבית'],
-        chart_title__en=['כותרת התרשים באנגלית'],
-        chart_abstract=['אבסטרקט של התרשים'],
-        chart_abstract__ar=['אבסטרקט התרשים בערבית'],
-        chart_abstract__en=['אבסטרקט התרשים באנגלית'],
-        series_title=['כותרת סדרת הנתונים (נשים או גברים):'],
-        series_title__ar=['כותרת הסידרה בערבית'],
-        series_title__en=['כותרת הסידרה באנגלית'],
-        series_abstract=[
-          'אבסטרקט של סדרת הנתונים (נשים או גברים)',            
-        ],
-        series_abstract__ar=['אבסטרקט הסידרה בערבית'],
-        series_abstract__en=['אבסטרקט הסידרה באנגלית'],
-        source_description=[
-            'מקור הנתונים',
-            'מקור הנתונים שיופיע מתחת לתרשים',
-        ],
-        source_description__ar=['מקור הנתונים בערבית'],
-        source_description__en=['מקור הנתונים באנגלית'],
-        source_detail_description=[
-            'מקור הנתונים - כותרת הלוח',
-            'פירוט נוסף על מקור הנתונים (רלבנטי רק כאשר אין לינק למקור הנתונים)'
-        ],
-        source_url=[
-            'לינק למקור הנתונים',
-            'מקור הנתונים - לינק:',
-        ],
-        gender=['מגדר', 'מגדר:', 'שם הסדרה', 'שם הסידרה', 'שם הסידרה:'],
-        units=['יחידות'],
-        extrapulation_years=[
-         'שנת אקסטרפולציה (אם קיימת, מהשנה שבה עושות אקסטרפולציה):',
-         'שנת אקסטרפולציה (טווח שנים או שנה ספציפית, או שנת התחלה):',
-         'שנת אקסטרפולציה (טווח שנים או שנת התחלה):',            
-        ],
-        year=[],
-        value=[],
-    ), target=dict(name='out')),
+    verify_unused_fields(),
+    DF.concatenate(FIELD_MAPPING, target=dict(name='out')),
     fix_urls(['source_url']),
     DF.add_field('order_index', 'integer'),
     lambda rows: ({**row, **{'order_index': i}} for i, row in enumerate(rows)),
