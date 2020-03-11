@@ -139,7 +139,9 @@ SERIES_FIELDS = [
     'series_title', 'series_title__ar', 'series_title__en',
     'series_abstract', 'series_abstract__ar', 'series_abstract__en',
     'source_description', 'source_description__ar', 'source_description__en',
-    'source_detail_description', 'gender', 'extrapulation_years',
+    'source_detail_description',
+    'gender', 'gender__ar', 'gender__en',
+    'extrapulation_years',
     'source_url', 'units', 'order_index',
 ]
 
@@ -227,6 +229,28 @@ def verify_unused_fields():
 
     return func
 
+def fix_languages():
+    def func(row):
+        row['language'] = 'heb,eng,ara'
+    return func
+
+
+def verify_chart_types():
+    def func(row):
+        row['chart_type'] = {
+            'ברים נערמים של הזיקות השונות, לפי שנים': 'stacked',
+            'ברים נערמים, לפי שנים': 'stacked',
+            'ברים (אופקיים או אנכיים), שנים בתוך תחומי לימוד': 'stacked',
+            'ברים נערמים של גברים ונשים, לפי שנים (משמאל לימין)': 'stacked',
+            'גברים-נשים רגיל': 'line',
+            'תרשים אופקי המשווה בין המדינות, מהערך הגבוה ביותר לערך הנמוך ביותר': 'vstacked',
+            'ברים מלמעלה למטה, שנים בתוך מדינות': 'vstacked'
+            'ברים מוערמים, לפי שנים': 'stacked',
+            'ברים נערמים לפי שנים': 'stacked',
+            None: 'line',
+        }[row['chart_type']]
+    return func
+
 
 datasets_flow = DF.Flow(*[
         transpose(sheet)
@@ -240,6 +264,7 @@ datasets_flow = DF.Flow(*[
     verify_unused_fields(),
     DF.concatenate(FIELD_MAPPING, target=dict(name='out')),
     fix_urls(['source_url']),
+    fix_languages(),
     DF.add_field('order_index', 'integer'),
     lambda rows: ({**row, **{'order_index': i}} for i, row in enumerate(rows)),
     set_defaults,
@@ -323,6 +348,7 @@ datasets_flow = DF.Flow(*[
         )
     ),
     DF.delete_fields(SERIES_FIELDS + ['dataset']),
+    verify_chart_types(),
     split_and_translate('tags', 'tags', delimiter=',', keyword=True),
     split_and_translate('life_areas', 'life_areas', delimiter=',', keyword=True),
     split_and_translate('language', 'languages', delimiter=',', keyword=True),
