@@ -67,12 +67,14 @@ def transpose(sheet):
         else:
             break
 
+
 def set_defaults(row):
     row['series_title'] = row.get('series_title') or row['gender']
     for x in ['title', 'abstract']:
         for lang in ['', '__ar']:
             f = 'chart_{}{}'.format(x, lang)
             row[f] = row.get(f) or row.get('series_{}{}'.format(x, lang))
+
 
 def extrapulate_years(row):
     ey = row['extrapulation_years']
@@ -252,6 +254,15 @@ def verify_chart_types():
     return func
 
 
+def ensure_chart_title():
+    def func(rows):
+        chart_title = None
+        for row in rows:
+            row['chart_title'] = chart_title = row['chart_title'] or chart_title
+            yield row
+    return func
+
+
 datasets_flow = DF.Flow(*[
         transpose(sheet)
         for sheet in sheets
@@ -264,6 +275,7 @@ datasets_flow = DF.Flow(*[
     verify_unused_fields(),
     DF.concatenate(FIELD_MAPPING, target=dict(name='out')),
     fix_urls(['source_url']),
+    ensure_chart_title(),
     fix_languages(),
     DF.add_field('order_index', 'integer'),
     lambda rows: ({**row, **{'order_index': i}} for i, row in enumerate(rows)),
