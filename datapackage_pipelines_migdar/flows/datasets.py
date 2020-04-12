@@ -8,8 +8,6 @@ from datapackage_pipelines_migdar.flows.dump_to_es import es_dumper
 from datapackage_pipelines_migdar.flows.i18n import split_and_translate, fix_urls
 from datapackage_pipelines_migdar.flows.constants import REVISION
 
-BUMP = 1
-
 URLS = [
     [
         'https://docs.google.com/spreadsheets/d/1uDZ-aPGie30IHaCqJOYgERl9hyVCKDm62TrBgkF3jgo/view#gid=',
@@ -402,8 +400,9 @@ datasets_flow = DF.Flow(*[
 def flow(*_):
     return DF.Flow(
         datasets_flow,
-        es_dumper('datasets', REVISION + BUMP, 'datasets_in_es')
+        es_dumper('datasets', REVISION, 'datasets_in_es')
     )
+
 
 
 if __name__ == '__main__':

@@ -44,13 +44,7 @@ def extract_values(row):
         if row.get(k)
     )
     values = list(set(values))
-    dvalues = [
-        '{} - {}'.format(v1, v2)
-        for v1 in values
-        for v2 in values
-        if v1 != v2
-    ]
-    return values + dvalues
+    return values
 
 
 translations = {}
@@ -85,8 +79,8 @@ for source, gid in sources.items():
 
 def split_and_translate(field, translations_key, delimiter=None, keyword=False):
 
-    SUFFIXES = ['', '__en', '__ar']
-    COLS = ['hebrew', 'english', 'arabic']
+    SUFFIXES = ['', '__en', '__ar', '__all']
+    COLS = ['hebrew', 'english', 'arabic', 'values']
 
     tx = translations[translations_key]
     tx_keys = list(tx.keys())
