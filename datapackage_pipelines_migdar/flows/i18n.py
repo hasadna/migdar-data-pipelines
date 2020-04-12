@@ -116,18 +116,21 @@ def split_and_translate(field, translations_key, delimiter=None, keyword=False):
                     translation = tx[best[0][0]]
                     for col, suffix in zip(COLS, SUFFIXES):
                         key = '{}{}'.format(field, suffix)
-                        to_val = translation[col]
-                        if to_val:
-                            to_val = clean(to_val)
+                        to_vals = translation[col]
+                        if not isinstance(to_vals, (list, tuple)):
+                            to_vals = [to_vals]
+                        for to_val in to_vals:
                             if to_val:
-                                if to_val not in row[key]:
-                                    row[key].append(to_val)
+                                to_val = clean(to_val)
+                                if to_val:
+                                    if to_val not in row[key]:
+                                        row[key].append(to_val)
+                                else:
+                                    if val not in row[key]:
+                                        row[key].append(val)
                             else:
                                 if val not in row[key]:
                                     row[key].append(val)
-                        else:
-                            if val not in row[key]:
-                                row[key].append(val)
                 else:
                     if val_ not in complained:
                         complained.add(val_)
