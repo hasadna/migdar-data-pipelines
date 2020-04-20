@@ -63,7 +63,7 @@ def transpose(sheet):
     cells = list(stream.iter())
     num_rows = len(cells)
     headers = None
-    print(num_rows)
+    outputed = 0
     for i in range(num_rows):
         row = [(cells_row[i] if len(cells_row) > i else None) for cells_row in cells]
         if any(row):
@@ -71,9 +71,11 @@ def transpose(sheet):
                 headers = row
                 all_headers.update(headers) 
             else:
+                outputed += 1
                 yield dict(zip(headers, row))
         else:
             break
+    print(sheet, num_rows, '->', outputed)
 
 
 def set_defaults(row):
@@ -257,6 +259,7 @@ def verify_chart_types():
             'ברים מלמעלה למטה, שנים בתוך מדינות': 'hbars',
             'ברים מוערמים, לפי שנים': 'stacked',
             'ברים נערמים לפי שנים': 'stacked',
+            'ברים נערמים לפי חודשים': 'stacked',
             'ברים נערמים': 'stacked',
             'ברים': 'stacked',
             None: 'line',
@@ -278,7 +281,10 @@ datasets_flow = DF.Flow(*[
         for sheet in sheets
     ],
     DF.unpivot(
-        [{'name': '([0-9/]+.+)', 'keys': {'year': '\\1'}}],
+        [{'name': '(' +
+                  '[א-ת ]*' +
+                  '[0-9/]{2,}' +
+                  '.+)', 'keys': {'year': '\\1'}}],
         [{'name': 'year', 'type': 'string'}],
         {'name': 'value', 'type': 'number'},
     ),
@@ -409,4 +415,4 @@ def flow(*_):
 
 
 if __name__ == '__main__':
-    DF.Flow(datasets_flow).process()
+    DF.Flow(datasets_flow, DF.dump_to_path('datasets_out')).process()
