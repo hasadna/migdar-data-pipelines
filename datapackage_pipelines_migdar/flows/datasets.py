@@ -10,6 +10,7 @@ from datapackage_pipelines_migdar.flows.constants import REVISION
 
 URLS = [
     [
+        # Gender Statistics
         'https://docs.google.com/spreadsheets/d/1uDZ-aPGie30IHaCqJOYgERl9hyVCKDm62TrBgkF3jgo/view#gid=',
         [
             '1012201957',
@@ -22,6 +23,7 @@ URLS = [
             '1648779124',
             '1702779521',
             '1938181021',
+            '377560845',
             '479978628',
             '520697029',
             '59161098',
@@ -31,6 +33,7 @@ URLS = [
         ]
     ],
     [
+        # Gender Index
         'https://docs.google.com/spreadsheets/d/1lgWPjyLflobl-KZKAlZieIVdyrFw2Q6q5Jf45e155Nw/view#gid=',
         [
             '1012229604',
