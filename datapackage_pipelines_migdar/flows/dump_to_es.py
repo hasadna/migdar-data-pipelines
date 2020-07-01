@@ -42,8 +42,6 @@ class my_dump_to_es(dump_to_es):
                     resource_name = config['resource-name']
                     if index_name.endswith('__docs'):
                         continue
-                    if resource_name != 'publications':
-                        continue
                     logging.info('DELETING from "%s" items with revision < %d',
                                  index_name, revision)
                     queries = [
