@@ -113,6 +113,14 @@ def fix_nones():
     return func
 
 
+def verify_migdar_id():
+    def func(row):
+        if len(row['migdar_id']) > 200:
+            print('TOO LONG MIGDAR ID', row)
+            row['migdar_id'] = row['migdar_id'][:200]
+    return func
+
+
 def base_flow():
     sources, *_ = Flow(
         list_gdrive(),
@@ -176,6 +184,7 @@ def base_flow():
         split_and_translate('languages', 'languages', keyword=True, delimiter=' '),
         split_and_translate('source_kind', 'source_kind', keyword=True),
         split_and_translate('item_kind', 'item_kind', keyword=True),
+        verify_migdar_id(),
         add_computed_field([
             {'operation': 'format', 'target': 'doc_id', 'with': KEY_PATTERN},
             {'operation': 'format', 'target': 'page_title',
