@@ -14,7 +14,7 @@ def get_migdar_session():
     return migdar_session
 
 
-link = re.compile('(http[s]?://[-_?&A-Z0-9a-z./=]+)', re.MULTILINE)
+link = re.compile('(http[s]?://[-_?&A-Z0-9a-z./=%]+)', re.MULTILINE)
 
 def fix_links(field):
     def func(row):

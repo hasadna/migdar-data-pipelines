@@ -13,8 +13,8 @@ from dataflows import (
 )
 from datapackage_pipelines_migdar.flows.dump_to_es import es_dumper
 from datapackage_pipelines_migdar.flows.i18n import split_and_translate, fix_urls
-from datapackage_pipelines_migdar.flows.constants import REVISION
 from datapackage_pipelines_migdar.flows.common import fix_links
+from datapackage_pipelines_migdar.flows.constants import REVISION
 
 KEY_PATTERN = 'publications/{migdar_id}'
 PAGE_TITLE_PATTERN = '{title}'

@@ -2,8 +2,8 @@ import dataflows as DF
 from datapackage_pipelines_migdar.flows.dump_to_es import es_dumper
 from datapackage_pipelines_migdar.flows.i18n import \
     split_and_translate, fix_urls
-from datapackage_pipelines_migdar.flows.constants import REVISION
 from datapackage_pipelines_migdar.flows.common import fix_links
+from datapackage_pipelines_migdar.flows.constants import REVISION
 
 ORGS_URL='https://docs.google.com/spreadsheets/d/1fWHl6rlvpqfCXoM1IVhqlY0SWQ_IYCWukuyCcTDwWjM/view'
 
