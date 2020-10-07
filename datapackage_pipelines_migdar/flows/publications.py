@@ -14,6 +14,7 @@ from dataflows import (
 from datapackage_pipelines_migdar.flows.dump_to_es import es_dumper
 from datapackage_pipelines_migdar.flows.i18n import split_and_translate, fix_urls
 from datapackage_pipelines_migdar.flows.constants import REVISION
+from datapackage_pipelines_migdar.flows.common import fix_links
 
 KEY_PATTERN = 'publications/{migdar_id}'
 PAGE_TITLE_PATTERN = '{title}'
@@ -184,6 +185,7 @@ def base_flow():
         split_and_translate('languages', 'languages', keyword=True, delimiter=' '),
         split_and_translate('source_kind', 'source_kind', keyword=True),
         split_and_translate('item_kind', 'item_kind', keyword=True),
+        fix_links('notes'), 
         verify_migdar_id(),
         add_computed_field([
             {'operation': 'format', 'target': 'doc_id', 'with': KEY_PATTERN},

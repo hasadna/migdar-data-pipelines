@@ -3,6 +3,7 @@ from datapackage_pipelines_migdar.flows.dump_to_es import es_dumper
 from datapackage_pipelines_migdar.flows.i18n import \
     split_and_translate, fix_urls
 from datapackage_pipelines_migdar.flows.constants import REVISION
+from datapackage_pipelines_migdar.flows.common import fix_links
 
 ORGS_URL='https://docs.google.com/spreadsheets/d/1fWHl6rlvpqfCXoM1IVhqlY0SWQ_IYCWukuyCcTDwWjM/view'
 
@@ -85,6 +86,9 @@ org_flow = DF.Flow(
         with_='org/{entity_id}'
     ),
     fix_doc_id,
+    fix_links('objective'),
+    fix_links('objective__en'),
+    fix_links('objective__ar'),
     DF.set_type('org_name',        **{'es:title': True}),
     DF.set_type('org_name__ar',    **{'es:title': True}),
     DF.set_type('alt_names',       
