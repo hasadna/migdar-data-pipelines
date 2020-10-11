@@ -8,6 +8,7 @@ from datapackage_pipelines_migdar.flows.dump_to_es import es_dumper
 from datapackage_pipelines_migdar.flows.i18n import split_and_translate, fix_urls
 from datapackage_pipelines_migdar.flows.constants import REVISION
 
+
 URLS = [
     [
         # Gender Statistics
