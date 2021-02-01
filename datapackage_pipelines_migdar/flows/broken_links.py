@@ -54,10 +54,14 @@ def check_broken():
                 yield row
     return func
 
-def get_title(c):
-    def func(r):
-        return r[c['title']]
-    return func
+def get_title(title_field):
+    def wrapper(title_field_):
+        def func(r):
+            if title_field_ not in r:
+                print('ERRRR, missing field %s in %r' % (title_field_, r))
+            return r[title_field_]
+        return func
+    return wrapper(title_field)
 
 def broken_links_flow():
     return DF.Flow(
@@ -65,7 +69,7 @@ def broken_links_flow():
             DF.Flow(
                 DF.load(URL_TEMPLATE.format(**c), name=c['name']),
                 DF.add_field('__name', 'string', c['name'], resources=c['name']),
-                DF.add_field('__title', 'string', get_title(c), resources=c['name']),
+                DF.add_field('__title', 'string', get_title(c['title']), resources=c['name']),
             )
             for c in configuration
         ],
