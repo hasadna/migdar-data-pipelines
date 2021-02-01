@@ -43,7 +43,7 @@ def check_broken():
         for row in rows:
             error = None
             try:
-                resp = requests.head(row['url'], allow_redirects=True, headers=HEADERS)
+                resp = requests.head(row['url'], allow_redirects=True, headers=HEADERS, timeout=10)
                 if resp.status_code >= 300:
                     error = '%s: %s' % (resp.status_code, resp.reason)
             except requests.exceptions.RequestException as e:
