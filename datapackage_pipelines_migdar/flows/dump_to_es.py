@@ -3,6 +3,7 @@ from tableschema_elasticsearch.mappers import MappingGenerator
 import dataflows as DF
 
 import logging
+import time
 
 
 class BoostingMappingGenerator(MappingGenerator):
@@ -41,35 +42,55 @@ class my_dump_to_es(dump_to_es):
                     revision = config['revision']
                     resource_name = config['resource-name']
                     if index_name.endswith('__docs'):
-                        continue
-                    logging.info('DELETING from "%s" items with revision < %d',
-                                 index_name, revision)
-                    queries = [
-                        {
-                            "bool": {
-                                "must_not": {
-                                    "exists": {
-                                        "field": "revision"
+                        logging.info('SETTING LAST UPDATE from "%s" items', index_name)
+                        now = time.time()
+                        body = {
+                            "doc": {
+                                "update_timestamp": now
+                            },
+                            "query": {
+                                "bool": {
+                                    "must_not": {
+                                        "exists": {
+                                            "field": "update_timestamp"
+                                        }
                                     }
                                 }
                             }
-                        },
-                        {
-                            "range": {
-                                "revision": {
-                                    "lt": revision
+                        }
+                        ret = self.engine.update_by_query(
+                            index_name, body
+                        )
+                        logging.info('UPDATE GOT %r', ret)
+                    else:
+                        logging.info('DELETING from "%s" items with revision < %d',
+                                    index_name, revision)
+                        queries = [
+                            {
+                                "bool": {
+                                    "must_not": {
+                                        "exists": {
+                                            "field": "revision"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "range": {
+                                    "revision": {
+                                        "lt": revision
+                                    }
                                 }
                             }
-                        }
-                    ]
-                    for i, q in enumerate(queries):
-                        ret = self.engine.delete_by_query(
-                            index_name,
-                            {
-                                "query": q
-                            }
-                        )
-                        logging.info('GOT (%d) %r', i, ret)
+                        ]
+                        for i, q in enumerate(queries):
+                            ret = self.engine.delete_by_query(
+                                index_name,
+                                {
+                                    "query": q
+                                }
+                            )
+                            logging.info('GOT (%d) %r', i, ret)
 
 
 def update_pk(pk):
