@@ -23,7 +23,7 @@ configuration = [
     )
 ]
 
-URL_TEMPLATE='https://api.yodaat.org/data/{name}_in_es/data/{filename}.csv'
+URL_TEMPLATE='data/{name}_in_es/data/{filename}.csv'
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:86.0) Gecko/20100101 Firefox/86.0',    
 }
