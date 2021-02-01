@@ -82,7 +82,7 @@ def broken_links_flow():
         unwind(),
         DF.delete_fields(['urls']),
         check_broken(),
-    ).process()
+    )
 
 def flow(*_):
     return DF.Flow(
