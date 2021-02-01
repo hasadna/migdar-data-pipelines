@@ -87,6 +87,7 @@ def broken_links_flow():
 def flow(*_):
     return DF.Flow(
         broken_links_flow(),
+        DF.update_resource(-1, **{'dpp:streaming': True}),
         DF.printer(),
         DF.dump_to_path('data/broken_links')
     )
