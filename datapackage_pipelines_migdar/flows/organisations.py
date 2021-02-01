@@ -4,6 +4,7 @@ from datapackage_pipelines_migdar.flows.i18n import \
     split_and_translate, fix_urls
 from datapackage_pipelines_migdar.flows.common import fix_links
 from datapackage_pipelines_migdar.flows.constants import REVISION
+import datetime
 
 ORGS_URL='https://docs.google.com/spreadsheets/d/1fWHl6rlvpqfCXoM1IVhqlY0SWQ_IYCWukuyCcTDwWjM/view'
 
@@ -50,6 +51,7 @@ def fix_doc_id(rows):
         yield row
         used[doc_id] += 1
 
+cur_year = datetime.date.today().year
 
 org_flow = DF.Flow(
     DF.load(ORGS_URL, name='orgs'), 
@@ -89,6 +91,7 @@ org_flow = DF.Flow(
     fix_links('objective'),
     fix_links('objective__en'),
     fix_links('objective__ar'),
+    DF.add_field('year', 'integer', default=cur_year),
     DF.set_type('org_name',        **{'es:title': True}),
     DF.set_type('org_name__ar',    **{'es:title': True}),
     DF.set_type('alt_names',       

@@ -331,8 +331,9 @@ datasets_flow = DF.Flow(*[
                 for k in [
                     'year', 'value'
                 ]
-             ]
-            )
+             ] + [
+                 ('max_year', dict(name='year', aggregate='max'))
+             ])
     ),
     verify_percents,
     DF.add_computed_field([
@@ -357,7 +358,8 @@ datasets_flow = DF.Flow(*[
                         (k, dict(aggregate='array'))
                         for k in SERIES_FIELDS + ['dataset']
                     ] + [
-                        ('num_datasets', dict(aggregate='count'))
+                        ('num_datasets', dict(aggregate='count')),
+                        ('year', dict(name='max_year', aggregate='max'))
                     ]
                  )),
     DF.add_computed_field(
