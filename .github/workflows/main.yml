@@ -14,13 +14,13 @@ jobs:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       run: |
-        mkdir bin
-        curl -L https://raw.githubusercontent.com/OriHoch/travis-ci-operator/master/travis_ci_operator.sh > ./bin/travis_ci_operator.sh
-        chmod +x ./bin/travis_ci_operator.sh
+        mkdir $HOME/bin || true
+        curl -L https://raw.githubusercontent.com/OriHoch/travis-ci-operator/master/travis_ci_operator.sh > $HOME/bin/travis_ci_operator.sh
+        chmod +x $HOME/bin/travis_ci_operator.sh
         echo init
-        ./bin/travis_ci_operator.sh init
+        $HOME/bin/travis_ci_operator.sh init
         echo docker-login
-        ./bin/travis_ci_operator.sh docker-login
+        $HOME/bin/travis_ci_operator.sh docker-login
         echo install
         .travis.sh install
         echo script
