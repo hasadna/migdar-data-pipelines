@@ -100,7 +100,7 @@ class my_dump_to_es(dump_to_es):
                     }
                 }
                 ret = self.engine.update_by_query(
-                    index_name, body, timeout=180
+                    index_name, body, timeout='180s'
                 )
                 logging.info('UPDATE GOT %r', ret)
 
