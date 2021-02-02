@@ -34,7 +34,7 @@ class BoostingMappingGenerator(MappingGenerator):
 
     @classmethod
     def _update_properties(cls, properties, schema, prefix=''):
-        props = super()._update_properties(cls, properties, schema, prefix)
+        props = super(BoostingMappingGenerator, cls)._update_properties(properties, schema, prefix)
         props['create_timestamp'] = dict(
             index=True,
             type='float'
