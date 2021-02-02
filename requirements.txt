@@ -5,3 +5,4 @@ fuzzywuzzy[speedup]
 google-api-python-client
 openpyxl==3.0.0
 plyvel
+six>=1.13.0
