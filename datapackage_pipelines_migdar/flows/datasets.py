@@ -9,7 +9,6 @@ from datapackage_pipelines_migdar.flows.i18n import split_and_translate, fix_url
 from datapackage_pipelines_migdar.flows.constants import REVISION
 
 
-
 URLS = [
     [
         # Gender Statistics
