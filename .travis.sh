@@ -10,28 +10,21 @@ if [ "${1}" == "install" ]; then
 
 elif [ "${1}" == "script" ]; then
     docker pull ${DOCKER_IMAGE}:latest
-    docker build -t ${DOCKER_IMAGE}:latest -t ${DOCKER_IMAGE}:${TRAVIS_COMMIT} --cache-from ${DOCKER_IMAGE}:latest .
+    docker build -t ${DOCKER_IMAGE}:latest -t ${DOCKER_IMAGE}:${GITHUB_SHA} --cache-from ${DOCKER_IMAGE}:latest .
 
     # ./render_notebook.sh QUICKSTART
 
 elif [ "${1}" == "deploy" ]; then
-    if [ "${TRAVIS_BRANCH}" == "master" ] &&\
-       [ "${TRAVIS_TAG}" == "" ] &&\
-       [ "${TRAVIS_PULL_REQUEST}" == "false" ]
-    then
-        docker push ${DOCKER_IMAGE}:latest &&\
-        docker push ${DOCKER_IMAGE}:${TRAVIS_COMMIT} &&\
-        travis_ci_operator.sh github-yaml-update \
-            migdar-k8s master values.auto-updated.yaml '{"pipelines":{"image": "'${DOCKER_IMAGE}:${TRAVIS_COMMIT}'"}}' \
-            "automatic update of migdar-data-pipelines" hasadna/migdar-k8s &&\
-        echo &&\
-        echo Great Success &&\
-        echo &&\
-        echo ${DOCKER_IMAGE}:latest &&\
-        echo ${DOCKER_IMAGE}:${TRAVIS_COMMIT}
-    else
-        echo Skipping deployment
-    fi
+    docker push ${DOCKER_IMAGE}:latest &&\
+    docker push ${DOCKER_IMAGE}:${GITHUB_SHA} &&\
+    travis_ci_operator.sh github-yaml-update \
+        migdar-k8s master values.auto-updated.yaml '{"pipelines":{"image": "'${DOCKER_IMAGE}:${GITHUB_SHA}'"}}' \
+        "automatic update of migdar-data-pipelines" hasadna/migdar-k8s &&\
+    echo &&\
+    echo Great Success &&\
+    echo &&\
+    echo ${DOCKER_IMAGE}:latest &&\
+    echo ${DOCKER_IMAGE}:${GITHUB_SHA}
 
     # travis_ci_operator.sh github-update self master "
     #     cp -f $PWD/QUICKSTART.md $PWD/QUICKSTART.ipynb ./ &&\
