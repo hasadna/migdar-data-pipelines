@@ -32,6 +32,15 @@ class BoostingMappingGenerator(MappingGenerator):
             prop['index'] = True
         return prop
 
+    @classmethod
+    def _update_properties(cls, properties, schema, prefix=''):
+        props = super()._update_properties(cls, properties, schema, prefix)
+        props['create_timestamp'] = dict(
+            index=True,
+            type='scaled_float',
+            ignore_malformed=True
+        )
+        return props
 
 class my_dump_to_es(dump_to_es):
 
