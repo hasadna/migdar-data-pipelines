@@ -16,8 +16,14 @@ jobs:
       run: |
         mkdir bin
         curl -L https://raw.githubusercontent.com/OriHoch/travis-ci-operator/master/travis_ci_operator.sh > ./bin/travis_ci_operator.sh
-        bash ./bin/travis_ci_operator.sh init
+        chmod +x ./bin/travis_ci_operator.sh
+        echo init
+        ./bin/travis_ci_operator.sh init
+        echo docker-login
         ./bin/travis_ci_operator.sh docker-login
-        bash .travis.sh install
-        bash .travis.sh script
-        bash .travis.sh deploy
+        echo install
+        .travis.sh install
+        echo script
+        .travis.sh script
+        echo deploy
+        .travis.sh deploy
