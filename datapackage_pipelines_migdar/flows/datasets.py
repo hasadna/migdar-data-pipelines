@@ -281,6 +281,13 @@ def ensure_chart_title():
     return func
 
 
+def clear_to_2020(res_name, row, i, e, field):
+    if field is not None and field.name == 'year':
+        row['year'] = 2020
+        return True
+    return False
+
+
 datasets_flow = DF.Flow(*[
         transpose(sheet)
         for sheet in sheets
@@ -362,7 +369,7 @@ datasets_flow = DF.Flow(*[
                         ('year', dict(name='max_year', aggregate='max'))
                     ]
                  )),
-    DF.set_type('year', type='integer'),
+    DF.set_type('year', type='integer', on_error=clear_to_2020),
     DF.add_computed_field(
         target=dict(
             name='series',
