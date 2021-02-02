@@ -45,8 +45,11 @@ class my_dump_to_es(dump_to_es):
                         logging.info('SETTING LAST UPDATE from "%s" items', index_name)
                         now = time.time()
                         body = {
-                            "doc": {
-                                "update_timestamp": now
+                            "script": {
+                                "inline": "ctx._source.update_timestamp = params.cur_time",
+                                "params": {
+                                    "cur_time": now
+                                }
                             },
                             "query": {
                                 "bool": {
