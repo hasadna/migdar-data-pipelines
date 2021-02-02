@@ -11,7 +11,7 @@ jobs:
     - env:
         DOCKER_IMAGE_NAME: "hasadna/migdar-data-pipelines"
         TRAVIS_CI_OPERATOR: "1"
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       run: |
         mkdir $HOME/bin || true
