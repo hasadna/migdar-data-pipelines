@@ -22,8 +22,8 @@ jobs:
         echo docker-login
         $HOME/bin/travis_ci_operator.sh docker-login
         echo install
-        .travis.sh install
+        ./.travis.sh install
         echo script
-        .travis.sh script
+        ./.travis.sh script
         echo deploy
-        .travis.sh deploy
+        ./.travis.sh deploy
