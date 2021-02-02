@@ -2,9 +2,10 @@ import os
 import re
 from copy import copy
 
-import googleapiclient.discovery
-from google.oauth2 import service_account
+from googleapiclient.discovery import build
+from google.oauth2.service_account import Credentials
 from googleapiclient.http import MediaIoBaseDownload
+
 from openpyxl import load_workbook
 import logging
 from dataflows import (
@@ -21,13 +22,13 @@ PAGE_TITLE_PATTERN = '{title}'
 
 SCOPES = ['https://www.googleapis.com/auth/drive']
 try:
-    credentials = service_account.Credentials.from_service_account_file(
+    credentials = Credentials.from_service_account_file(
         '/migdar-gdrive/secret-g-service-account.json', scopes=SCOPES)
 except Exception:
     logging.exception('Failed to open creds!')
-    credentials = service_account.Credentials.from_service_account_file(
+    credentials = Credentials.from_service_account_file(
         'gdrive_creds.json', scopes=SCOPES)
-drive_service = googleapiclient.discovery.build('drive', 'v3', credentials=credentials)
+drive_service = build('drive', 'v3', credentials=credentials)
 
 
 def list_gdrive():

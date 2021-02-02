@@ -8,7 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - env:
+    - name: Build it
+      env:
         DOCKER_IMAGE: "hasadna/migdar-data-pipelines"
         TRAVIS_CI_OPERATOR: "1"
         DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}

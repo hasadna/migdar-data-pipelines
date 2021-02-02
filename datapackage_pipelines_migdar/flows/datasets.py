@@ -363,6 +363,7 @@ datasets_flow = DF.Flow(*[
                         ('year', dict(name='max_year', aggregate='max'))
                     ]
                  )),
+    DF.set_type('year', type='integer'),
     DF.add_computed_field(
         target=dict(
             name='series',
