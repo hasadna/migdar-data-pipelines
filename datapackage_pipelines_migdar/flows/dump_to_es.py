@@ -36,64 +36,64 @@ class BoostingMappingGenerator(MappingGenerator):
 class my_dump_to_es(dump_to_es):
 
     def finalize(self):
+        now = time.time()
         for index_name, configs in self.index_to_resource.items():
             for config in configs:
                 if 'revision' in config:
                     revision = config['revision']
                     resource_name = config['resource-name']
                     if index_name.endswith('__docs'):
-                        logging.info('SETTING LAST UPDATE from "%s" items', index_name)
-                        now = time.time()
-                        body = {
-                            "script": {
-                                "inline": "ctx._source.update_timestamp = params.cur_time",
-                                "params": {
-                                    "cur_time": now
-                                }
-                            },
-                            "query": {
-                                "bool": {
-                                    "must_not": {
-                                        "exists": {
-                                            "field": "update_timestamp"
-                                        }
+                        continue
+                    logging.info('DELETING from "%s" items with revision < %d',
+                                index_name, revision)
+                    queries = [
+                        {
+                            "bool": {
+                                "must_not": {
+                                    "exists": {
+                                        "field": "revision"
                                     }
+                                }
+                            }
+                        },
+                        {
+                            "range": {
+                                "revision": {
+                                    "lt": revision
                                 }
                             }
                         }
-                        ret = self.engine.update_by_query(
-                            index_name, body
+                    ]
+                    for i, q in enumerate(queries):
+                        ret = self.engine.delete_by_query(
+                            index_name,
+                            {
+                                "query": q
+                            }
                         )
-                        logging.info('UPDATE GOT %r', ret)
-                    else:
-                        logging.info('DELETING from "%s" items with revision < %d',
-                                    index_name, revision)
-                        queries = [
-                            {
-                                "bool": {
-                                    "must_not": {
-                                        "exists": {
-                                            "field": "revision"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "range": {
-                                    "revision": {
-                                        "lt": revision
-                                    }
+                        logging.info('GOT (%d) %r', i, ret)
+                logging.info('SETTING CREATE TIMESTAMP in "%s" items', index_name)
+                body = {
+                    "script": {
+                        "inline": "ctx._source.create_timestamp = params.cur_time",
+                        "params": {
+                            "cur_time": now
+                        }
+                    },
+                    "query": {
+                        "bool": {
+                            "must_not": {
+                                "exists": {
+                                    "field": "create_timestamp"
                                 }
                             }
-                        ]
-                        for i, q in enumerate(queries):
-                            ret = self.engine.delete_by_query(
-                                index_name,
-                                {
-                                    "query": q
-                                }
-                            )
-                            logging.info('GOT (%d) %r', i, ret)
+                        }
+                    }
+                }
+                ret = self.engine.update_by_query(
+                    index_name, body, timeout=180
+                )
+                logging.info('UPDATE GOT %r', ret)
 
 
 def update_pk(pk):

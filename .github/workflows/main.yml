@@ -1,0 +1,22 @@
+name: CI
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+jobs:
+  build-server:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - env:
+        DOCKER_IMAGE_NAME: "hasadna/migdar-data-pipelines"
+        TRAVIS_CI_OPERATOR: "1"
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      run: |
+        curl -L https://raw.githubusercontent.com/OriHoch/travis-ci-operator/master/travis_ci_operator.sh > ./bin/travis_ci_operator.sh
+        bash ./bin/travis_ci_operator.sh init
+        ./bin/travis_ci_operator.sh docker-login
+        bash .travis.sh install
+        bash .travis.sh script
+        bash .travis.sh deploy
