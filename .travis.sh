@@ -17,9 +17,9 @@ elif [ "${1}" == "script" ]; then
 elif [ "${1}" == "deploy" ]; then
     docker push ${DOCKER_IMAGE}:latest &&\
     docker push ${DOCKER_IMAGE}:${GITHUB_SHA} &&\
-    travis_ci_operator.sh github-yaml-update \
-        migdar-k8s master values.auto-updated.yaml '{"pipelines":{"image": "'${DOCKER_IMAGE}:${GITHUB_SHA}'"}}' \
-        "automatic update of migdar-data-pipelines" hasadna/migdar-k8s &&\
+    # $HOME/travis_ci_operator.sh github-yaml-update \
+    #     migdar-k8s master values.auto-updated.yaml '{"pipelines":{"image": "'${DOCKER_IMAGE}:${GITHUB_SHA}'"}}' \
+    #     "automatic update of migdar-data-pipelines" hasadna/migdar-k8s &&\
     echo &&\
     echo Great Success &&\
     echo &&\
