@@ -1,4 +1,4 @@
-dataflows-elasticsearch
+dataflows-elasticsearch>=0.0.4
 dataflows>=0.1.0
 gunicorn
 fuzzywuzzy[speedup]

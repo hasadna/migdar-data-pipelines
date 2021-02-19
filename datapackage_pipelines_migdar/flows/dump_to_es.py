@@ -158,7 +158,8 @@ def es_dumper(resource_name, revision, path):
                 ]
             },
             mapper_cls=BoostingMappingGenerator,
-            index_settings={'index.mapping.coerce': True}
+            index_settings={'index.mapping.coerce': True},
+            elasticsearch_options=dict(timeout=60)
         ),
         DF.dump_to_path('data/{}'.format(path)),
         collate(revision),
