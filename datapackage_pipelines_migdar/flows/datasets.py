@@ -66,6 +66,7 @@ sheets = [base + gid for base, gids in URLS for gid in gids]
 all_headers = set()
 
 
+
 def transpose(sheet):
     stream = tabulator.Stream(sheet).open()
     cells = list(stream.iter())
