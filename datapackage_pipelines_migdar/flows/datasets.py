@@ -70,7 +70,7 @@ all_headers = set()
 def transpose(sheet):
     stream = tabulator.Stream(sheet).open()
     cells = list(stream.iter())
-    num_rows = len(cells)
+    num_rows = len(cells[0])
     headers = None
     outputed = 0
     for i in range(num_rows):
