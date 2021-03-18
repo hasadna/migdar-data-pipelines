@@ -4,6 +4,7 @@ import dataflows as DF
 
 import logging
 import time
+import datetime
 
 
 class BoostingMappingGenerator(MappingGenerator):
@@ -80,7 +81,7 @@ class my_dump_to_es(dump_to_es):
                             }
                         )
                         logging.info('GOT (%d) %r', i, ret)
-                logging.info('SETTING CREATE TIMESTAMP in "%s" items', index_name)
+                logging.info('%s: SETTING CREATE TIMESTAMP in "%s" items', datetime.datetime.now().isoformat(), index_name)
                 body = {
                     "script": {
                         "inline": "ctx._source.create_timestamp = params.cur_time",
@@ -98,9 +99,12 @@ class my_dump_to_es(dump_to_es):
                         }
                     }
                 }
-                ret = self.engine.update_by_query(
-                    index_name, body, timeout='180s'
-                )
+                try:
+                    ret = self.engine.update_by_query(
+                        index_name, body, timeout='300s'
+                    )
+                except Exception:
+                    logging.info('%s: FAILED SETTING CREATE TIMESTAMP in "%s" items', datetime.datetime.now().isoformat(), index_name)
                 logging.info('UPDATE GOT %r', ret)
 
 
