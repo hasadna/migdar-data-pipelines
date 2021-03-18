@@ -101,7 +101,7 @@ class my_dump_to_es(dump_to_es):
                 }
                 try:
                     ret = self.engine.update_by_query(
-                        index_name, body, timeout='300s'
+                        index_name, body, timeout='5m', request_timeout=300
                     )
                 except Exception:
                     logging.info('%s: FAILED SETTING CREATE TIMESTAMP in "%s" items', datetime.datetime.now().isoformat(), index_name)
