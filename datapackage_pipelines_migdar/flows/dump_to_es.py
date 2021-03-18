@@ -105,6 +105,7 @@ class my_dump_to_es(dump_to_es):
                     )
                 except Exception:
                     logging.info('%s: FAILED SETTING CREATE TIMESTAMP in "%s" items', datetime.datetime.now().isoformat(), index_name)
+                    raise
                 logging.info('UPDATE GOT %r', ret)
 
 
