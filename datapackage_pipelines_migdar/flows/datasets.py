@@ -28,6 +28,7 @@ URLS = [
             '1938181021',
             '203862596',
             '2025222401',
+            '330650804',
             '377560845',
             '455272098',
             # '479978628',
@@ -70,10 +71,11 @@ all_headers = set()
 def transpose(sheet):
     stream = tabulator.Stream(sheet).open()
     cells = list(stream.iter())
-    num_rows = len(cells[0])
+    num_rows = len(cells)
+    num_cols= len(cells[0])
     headers = None
     outputed = 0
-    for i in range(num_rows):
+    for i in range(num_cols):
         row = [(cells_row[i] if len(cells_row) > i else None) for cells_row in cells]
         if any(row):
             if i == 0:
