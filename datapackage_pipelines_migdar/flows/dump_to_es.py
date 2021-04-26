@@ -83,6 +83,12 @@ class my_dump_to_es(dump_to_es):
                         logging.info('GOT (%d) %r', i, ret)
                 logging.info('%s: SETTING CREATE TIMESTAMP in "%s" items', datetime.datetime.now().isoformat(), index_name)
                 body = {
+                    "script": {
+                        "inline": "ctx._source.create_timestamp = params.cur_time",
+                        "params": {
+                            "cur_time": now
+                        }
+                    },
                     "query": {
                         "bool": {
                             "must_not": {
@@ -93,27 +99,29 @@ class my_dump_to_es(dump_to_es):
                         }
                     }
                 }
-                update = {
-                    'script': {
-                        'inline': 'ctx._source.create_timestamp = params.cur_time',
-                        'lang': 'painless',
-                        'params' : {
-                            'cur_time': now
-                        }
-                    }
-                }
                 try:
-                    res = self.engine.search(index=index_name, body=body, size=1000)
-                    for hit in res['hits']['hits']:
-                        src = hit['_source']
-                        if 'create_timestamp' not in src:
-                            self.engine.update(index=index_name, id=hit['_id'], body=update)
-                            logging.info('%s: "%s" UPDATED create_timestamp for %s', datetime.datetime.now().isoformat(), index_name, hit['_id'])
+                    ret = self.engine.update_by_query(
+                        index_name, body, timeout='5m', request_timeout=300
+                    )                    
                 except Exception:
                     logging.info('%s: FAILED SETTING CREATE TIMESTAMP in "%s" items', datetime.datetime.now().isoformat(), index_name)
                     raise
                 logging.info('UPDATE GOT %r', ret)
 
+
+    def normalizer(self, resource: ResourceWrapper):
+        doc_ids = dict()
+        for index_name in self.index_to_resource.keys():
+            res = self.engine.search(index=index_name, size=10000)
+            for hit in res['hits']['hits']:
+                src = hit['_source']
+                if 'create_timestamp' not in src:
+                    doc_ids[src['doc_id']] = src['create_timestamp']
+        logging.info('GOT %d ROWS with TIMESTAMPS', len(doc_ids))
+        for row in super().normalizer(resource)():
+            if row['doc_id'] in doc_ids:
+                row['create_timestamp'] = doc_ids[row['doc_id']]
+            yield row
 
 def update_pk(pk):
     def update_schema(package):
