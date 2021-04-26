@@ -1,3 +1,4 @@
+from dataflows import ResourceWrapper
 from dataflows_elasticsearch import dump_to_es
 from tableschema_elasticsearch.mappers import MappingGenerator
 import dataflows as DF
