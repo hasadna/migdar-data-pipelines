@@ -119,7 +119,7 @@ class my_dump_to_es(dump_to_es):
                 if 'create_timestamp' in src:
                     create_timestamps[src['doc_id']] = src['create_timestamp']
         logging.info('GOT %d ROWS with TIMESTAMPS', len(create_timestamps))
-        for row in super().normalizer(resource)():
+        for row in super().normalizer(resource):
             if row['doc_id'] in create_timestamps:
                 row['create_timestamp'] = create_timestamps[row['doc_id']]
             yield row
