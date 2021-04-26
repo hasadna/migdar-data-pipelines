@@ -5,7 +5,6 @@ import dataflows as DF
 
 import logging
 import time
-import datetime
 
 
 class BoostingMappingGenerator(MappingGenerator):
@@ -46,7 +45,6 @@ class BoostingMappingGenerator(MappingGenerator):
 class my_dump_to_es(dump_to_es):
 
     def finalize(self):
-        now = time.time()
         for index_name, configs in self.index_to_resource.items():
             for config in configs:
                 if 'revision' in config:
@@ -82,31 +80,6 @@ class my_dump_to_es(dump_to_es):
                             }
                         )
                         logging.info('GOT (%d) %r', i, ret)
-                logging.info('%s: SETTING CREATE TIMESTAMP in "%s" items', datetime.datetime.now().isoformat(), index_name)
-                body = {
-                    "script": {
-                        "inline": "ctx._source.create_timestamp = params.cur_time",
-                        "params": {
-                            "cur_time": now
-                        }
-                    },
-                    "query": {
-                        "bool": {
-                            "must_not": {
-                                "exists": {
-                                    "field": "create_timestamp"
-                                }
-                            }
-                        }
-                    }
-                }
-                try:
-                    ret = self.engine.update_by_query(
-                        index_name, body, timeout='5m', request_timeout=300
-                    )                    
-                except Exception:
-                    logging.info('%s: FAILED SETTING CREATE TIMESTAMP in "%s" items', datetime.datetime.now().isoformat(), index_name)
-                    raise
                 logging.info('UPDATE GOT %r', ret)
 
 
@@ -138,7 +111,7 @@ def collate(revision):
         for row in rows:
             value = dict(
                 (k,v) for k,v in row.items()
-                if k not in ('doc_id', 'revision', 'score')
+                if k not in ('doc_id', 'revision', 'score', 'create_timestamp')
             )
             yield dict(
                 doc_id=row['doc_id'],
@@ -164,10 +137,12 @@ def collate(revision):
 
 
 def es_dumper(resource_name, revision, path):
+    now = time.time() 
     return DF.Flow(
         update_pk('doc_id'),
         DF.add_field('revision', 'integer', default=revision),
         DF.add_field('score', 'number', default=1),
+        DF.add_field('create_timestamp', 'number', now),
         my_dump_to_es(
             indexes={
                 'migdar__' + resource_name: [
