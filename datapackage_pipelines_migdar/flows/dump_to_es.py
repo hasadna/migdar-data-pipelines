@@ -83,12 +83,6 @@ class my_dump_to_es(dump_to_es):
                         logging.info('GOT (%d) %r', i, ret)
                 logging.info('%s: SETTING CREATE TIMESTAMP in "%s" items', datetime.datetime.now().isoformat(), index_name)
                 body = {
-                    "script": {
-                        "inline": "ctx._source.create_timestamp = params.cur_time",
-                        "params": {
-                            "cur_time": now
-                        }
-                    },
                     "query": {
                         "bool": {
                             "must_not": {
@@ -99,10 +93,24 @@ class my_dump_to_es(dump_to_es):
                         }
                     }
                 }
+                update = {
+                    'source': 'ctx._source.create_timestamp = params.cur_time',
+                    'lang': 'painless',
+                    'params' : {
+                        'cur_time': now
+                    }
+                }
                 try:
-                    ret = self.engine.update_by_query(
-                        index_name, body, timeout='5m', request_timeout=300
-                    )
+                    res = self.engine.search(index_name, body, size=1000)
+                    for hit in res['hits']['hits']:
+                        src = hit['_source']
+                        if 'create_timestamp' not in src:
+                            self.engine.update(index_name, update, id=hit['_id'])
+                            logging.info('%s: "%s" UPDATED create_timestamp for %s', datetime.datetime.now().isoformat(), index_name, hit['_id'])
+                
+                    # ret = self.engine.update_by_query(
+                    #     index_name, body, timeout='5m', request_timeout=300
+                    # )
                 except Exception:
                     logging.info('%s: FAILED SETTING CREATE TIMESTAMP in "%s" items', datetime.datetime.now().isoformat(), index_name)
                     raise
