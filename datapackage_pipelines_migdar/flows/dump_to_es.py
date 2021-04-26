@@ -101,11 +101,11 @@ class my_dump_to_es(dump_to_es):
                     }
                 }
                 try:
-                    res = self.engine.search(index_name, body, size=1000)
+                    res = self.engine.search(index=index_name, body=body, size=1000)
                     for hit in res['hits']['hits']:
                         src = hit['_source']
                         if 'create_timestamp' not in src:
-                            self.engine.update(index_name, update, id=hit['_id'])
+                            self.engine.update(index=index_name, id=hit['_id'], body=update)
                             logging.info('%s: "%s" UPDATED create_timestamp for %s', datetime.datetime.now().isoformat(), index_name, hit['_id'])
                 except Exception:
                     logging.info('%s: FAILED SETTING CREATE TIMESTAMP in "%s" items', datetime.datetime.now().isoformat(), index_name)
