@@ -111,17 +111,17 @@ class my_dump_to_es(dump_to_es):
 
 
     def normalizer(self, resource: ResourceWrapper):
-        doc_ids = dict()
+        create_timestamps = dict()
         for index_name in self.index_to_resource.keys():
             res = self.engine.search(index=index_name, size=10000)
             for hit in res['hits']['hits']:
                 src = hit['_source']
-                if 'create_timestamp' not in src:
-                    doc_ids[src['doc_id']] = src['create_timestamp']
-        logging.info('GOT %d ROWS with TIMESTAMPS', len(doc_ids))
+                if 'create_timestamp' in src:
+                    create_timestamps[src['doc_id']] = src['create_timestamp']
+        logging.info('GOT %d ROWS with TIMESTAMPS', len(create_timestamps))
         for row in super().normalizer(resource)():
-            if row['doc_id'] in doc_ids:
-                row['create_timestamp'] = doc_ids[row['doc_id']]
+            if row['doc_id'] in create_timestamps:
+                row['create_timestamp'] = create_timestamps[row['doc_id']]
             yield row
 
 def update_pk(pk):
