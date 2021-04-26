@@ -107,10 +107,6 @@ class my_dump_to_es(dump_to_es):
                         if 'create_timestamp' not in src:
                             self.engine.update(index_name, update, id=hit['_id'])
                             logging.info('%s: "%s" UPDATED create_timestamp for %s', datetime.datetime.now().isoformat(), index_name, hit['_id'])
-                
-                    # ret = self.engine.update_by_query(
-                    #     index_name, body, timeout='5m', request_timeout=300
-                    # )
                 except Exception:
                     logging.info('%s: FAILED SETTING CREATE TIMESTAMP in "%s" items', datetime.datetime.now().isoformat(), index_name)
                     raise
