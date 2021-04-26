@@ -94,10 +94,12 @@ class my_dump_to_es(dump_to_es):
                     }
                 }
                 update = {
-                    'source': 'ctx._source.create_timestamp = params.cur_time',
-                    'lang': 'painless',
-                    'params' : {
-                        'cur_time': now
+                    'script': {
+                        'inline': 'ctx._source.create_timestamp = params.cur_time',
+                        'lang': 'painless',
+                        'params' : {
+                            'cur_time': now
+                        }
                     }
                 }
                 try:
