@@ -33,14 +33,27 @@ def lang_flow(lang, prefix):
             for x in translations['tags'].values()
         ))]
 
+    def add_url(prefix_):
+        def func(rows):
+            for row in rows:
+                if 'url' not in row:
+                    yield row
+                elif row.get('doc_id'):
+                    row['url'] = 'https://yodaat.org/{}item/{}'.format(prefix_, row['doc_id'])
+                    yield row
+                else:
+                    print('MMMMMMMM MISSING DOC ID', row)
+
+        return DF.Flow(
+            DF.add_field('url', 'string', resources=-1),
+            func,
+        )
+
     return DF.Flow(
         *[
             DF.Flow(
                 DF.load('https://api.yodaat.org/data/{}_in_es/data/{}.csv'.format(x, y), name='{}-{}'.format(x, lang)),
-                DF.add_field('url', 'string',
-                             lambda row: 'https://yodaat.org/{}item/{}'.format(
-                                 prefix, row['doc_id']
-                             ), resources=-1),
+                add_url(prefix)
             )
             for x, y in [
                 ('publications', 'publications'),
@@ -50,7 +63,7 @@ def lang_flow(lang, prefix):
         ],
         tags,
         DF.add_field('url', 'string',
-                     lambda row: 'https://yodaat.org/{}search?tag={}&itag={}&kind=all&filters={{}}&sortOrder=-year'.format(*row['doc_id']),
+                     lambda row: 'https://yodaat.org/{}search?tag={}&itag={}&kind=all&filters={{}}&sortOrder=-year'.format(*row.get('doc_id')),
                      resources=-1),
         DF.update_resource(-1, name='tags-{}'.format(lang)),
     )
