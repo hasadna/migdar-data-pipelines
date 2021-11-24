@@ -10,6 +10,6 @@ PUBLICATIONS_KEY_PATTERN = 'publications/{migdar_id}'
 PUBLICATIONS_PAGE_TITLE_PATTERN = '{title}'
 
 today = datetime.date.today().isocalendar()
-BUMP = 3
+BUMP = 4
 REVISION = today[0] * 100 + today[1] + BUMP
 print('REVISION is {}'.format(REVISION))
