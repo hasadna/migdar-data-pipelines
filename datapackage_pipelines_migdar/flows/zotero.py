@@ -90,7 +90,7 @@ def extract_tags(field='tags', prefixes=None):
 def flow(*args):
     return DF.Flow(
         get(),
-        DF.filter_rows(lambda row: bool(row['key']) and bool(row['title'])),
+        DF.filter_rows(lambda row: bool(row['key']) and bool(row.get('title'))),
         simplify_tags,
         extract_tags('life_areas', ['Domain']),
         extract_tags('source_kind', ['Source', 'Resource', 'Resouce']),
