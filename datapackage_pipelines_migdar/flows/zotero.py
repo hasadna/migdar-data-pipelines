@@ -37,6 +37,8 @@ def get(start=0):
     while True:
         results = session.get(URL.format(start)).json()
         for i, res in enumerate(results):
+            if res['data'].get('parentItem'):
+                continue
             yield dict((k, v) for k, v in res['data'].items() if v is not None)
         if len(results) < 100:
             break
@@ -112,7 +114,8 @@ def flow(*args):
             target={'name': 'zotero', 'path': 'zotero.csv'}
         ),
         DF.dump_to_path('data/zotero'),
-        DF.update_resource(None, **{'dpp:streaming': True})
+        DF.update_resource(None, **{'dpp:streaming': True}),
+        DF.printer()
     )
 
 
