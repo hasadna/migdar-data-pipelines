@@ -48,6 +48,8 @@ def check_broken():
                     error = '%s: %s' % (resp.status_code, resp.reason)
             except requests.exceptions.RequestException as e:
                 error = str(e.__class__.__name__)
+            except requests.exceptions.BaseHTTPError as e:
+                error = str(e.__class__.__name__)
             if error:
                 print(row['url'], error)
                 row['error'] = error
