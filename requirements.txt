@@ -1,5 +1,5 @@
 dataflows-elasticsearch>=0.0.4
-dataflows>=0.1.0
+dataflows>=1
 gunicorn
 fuzzywuzzy[speedup]
 google-api-python-client
