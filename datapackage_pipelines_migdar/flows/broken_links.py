@@ -1,6 +1,7 @@
 import dataflows as DF
 import re
 import requests
+import time
 
 RE = '(http[s]?://[-_?&A-Z0-9a-z./=%]+)'
 RE = re.compile(RE)
@@ -23,37 +24,45 @@ configuration = [
     )
 ]
 
-URL_TEMPLATE='data/{name}_in_es/data/{filename}.csv'
+URL_TEMPLATE='https://api.yodaat.org/data/{name}_in_es/data/{filename}.csv'
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:86.0) Gecko/20100101 Firefox/86.0',    
 }
 
 
 def unwind():
+    used = set()
     def func(rows):
         for row in rows:
             for url in set(row['urls']):
-                row['url'] = url
-                yield row
+                if url not in used:
+                    row['url'] = url
+                    used.add(url)
+                    yield row
     return func
 
 
 def check_broken():
-    def func(rows):
-        for row in rows:
-            error = None
-            try:
-                resp = requests.head(row['url'], allow_redirects=True, headers=HEADERS, timeout=10)
+    def func(row):
+        error = None
+        backoff = 10
+        try:
+            while True:
+                resp = requests.get(row['url'], allow_redirects=True, headers=HEADERS, timeout=10, stream=True)
+                if resp.status_code == 429:
+                    time.sleep(backoff)
+                    backoff *= 2
+                    continue
                 if resp.status_code >= 300:
                     error = '%s: %s' % (resp.status_code, resp.reason)
-            except requests.exceptions.RequestException as e:
-                error = str(e.__class__.__name__)
-            except requests.exceptions.BaseHTTPError as e:
-                error = str(e.__class__.__name__)
-            if error:
-                print(row['url'], error)
-                row['error'] = error
-                yield row
+                break
+        except requests.exceptions.RequestException as e:
+            error = str(e.__class__.__name__)
+        except requests.exceptions.BaseHTTPError as e:
+            error = str(e.__class__.__name__)
+        if error:
+            print(row['url'], error)
+            row['error'] = error
     return func
 
 def get_title(title_field):
@@ -87,7 +96,8 @@ def broken_links_flow():
         DF.add_field('error', 'string'),
         unwind(),
         DF.delete_fields(['urls']),
-        check_broken(),
+        DF.parallelize(check_broken(), 4),
+        DF.filter_rows(lambda r: r['error'] is not None),
     )
 
 def flow(*_):
