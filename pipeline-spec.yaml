@@ -34,13 +34,13 @@ publications:
 
 sitemap:
   schedule:
-    crontab: "4 4 * * *"
+    crontab: "10 10 * * *"
   pipeline:
   - flow: datapackage_pipelines_migdar.flows.sitemap
 
 
 broken_links:
   schedule:
-    crontab: "4 4 * * *"
+    crontab: "10 10 * * *"
   pipeline:
   - flow: datapackage_pipelines_migdar.flows.broken_links
