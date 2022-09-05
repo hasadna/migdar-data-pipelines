@@ -315,11 +315,12 @@ datasets_flow = DF.Flow(*[
     ],
     DF.unpivot(
         [{'name': '(' +
+                  '([0-9])|' +
                   '([-0-9 ]+' +
                   '[א-ת ]+)' +
                   '|' +
                   '([א-ת ]*' +
-                  '[0-9/]{1,})' +
+                  '[0-9/]{2,})' +
                   '.+)', 'keys': {'year': '\\1'}}],
         [{'name': 'year', 'type': 'string'}],
         {'name': 'value', 'type': 'number'},
