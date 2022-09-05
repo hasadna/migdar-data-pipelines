@@ -319,7 +319,7 @@ datasets_flow = DF.Flow(*[
                   '[א-ת ]+)' +
                   '|' +
                   '([א-ת ]*' +
-                  '[0-9/]{2,})' +
+                  '[0-9/]{1,})' +
                   '.+)', 'keys': {'year': '\\1'}}],
         [{'name': 'year', 'type': 'string'}],
         {'name': 'value', 'type': 'number'},
