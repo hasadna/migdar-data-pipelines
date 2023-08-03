@@ -1,9 +1,9 @@
-FROM frictionlessdata/datapackage-pipelines:2.1.8
+FROM frictionlessdata/datapackage-pipelines:latest-alpine
 
-RUN echo "http://nl.alpinelinux.org/alpine/v3.11/main" > /etc/apk/repositories && \
-    echo "http://nl.alpinelinux.org/alpine/v3.11/community" >> /etc/apk/repositories && \
-    echo "http://nl.alpinelinux.org/alpine/v3.11/testing" >> /etc/apk/repositories &&  cat /etc/apk/repositories
-RUN apk --update --no-cache add -U musl==1.1.24-r0 libstdc++==9.2.0-r3 
+# RUN echo "http://nl.alpinelinux.org/alpine/v3.11/main" > /etc/apk/repositories && \
+#     echo "http://nl.alpinelinux.org/alpine/v3.11/community" >> /etc/apk/repositories && \
+#     echo "http://nl.alpinelinux.org/alpine/v3.11/testing" >> /etc/apk/repositories &&  cat /etc/apk/repositories
+# RUN apk --update --no-cache add -U musl==1.1.24-r0 libstdc++==9.2.0-r3 
 RUN apk --update --no-cache add bash wget nodejs npm nss chromium msttcorefonts-installer ttf-freefont
 RUN npm install -g npm@latest
 RUN cd /pipelines/ && PUPPETEER_SKIP_CHROMIUM_DOWNLOAD="true" npm install puppeteer
