@@ -1,13 +1,12 @@
 organisations:
   schedule:
-    crontab: "0 0 * * *"
+    crontab: "2 2 * * *"
   pipeline:
   - flow: datapackage_pipelines_migdar.flows.organisations
   
-
 datasets:
   schedule:
-    crontab: "0 0 * * *"
+    crontab: "2 2 * * *"
   pipeline:
   - flow: datapackage_pipelines_migdar.flows.datasets
 
@@ -20,14 +19,14 @@ dataset-assets:
   
 zotero:
   schedule:
-    crontab: "0 0 * * *"
+    crontab: "2 2 * * *"
   pipeline:
   - flow: datapackage_pipelines_migdar.flows.zotero
 
 
 publications:
   schedule:
-    crontab: "1 1 * * *"
+    crontab: "4 4 * * *"
   pipeline:
   - flow: datapackage_pipelines_migdar.flows.publications
 
