@@ -17,7 +17,7 @@ dataset-assets:
   - flow: datapackage_pipelines_migdar.flows.dataset_assets
 
   
-zotero:
+zotero_fetch:
   schedule:
     crontab: "2 2 * * *"
   pipeline:
@@ -25,8 +25,8 @@ zotero:
 
 
 publications:
-  schedule:
-    crontab: "4 4 * * *"
+  dependencies:
+    - pipeline: ./zotero_fetch
   pipeline:
   - flow: datapackage_pipelines_migdar.flows.publications
 
