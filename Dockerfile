@@ -1,4 +1,4 @@
-FROM frictionlessdata/datapackage-pipelines:latest-alpine
+FROM frictionlessdata/datapackage-pipelines:latest
 
 # RUN echo "http://nl.alpinelinux.org/alpine/v3.11/main" > /etc/apk/repositories && \
 #     echo "http://nl.alpinelinux.org/alpine/v3.11/community" >> /etc/apk/repositories && \
