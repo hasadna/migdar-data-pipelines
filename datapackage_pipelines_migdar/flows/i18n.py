@@ -9,7 +9,7 @@ sources = dict([
     ('life_areas', 809871679),
     ('source_kind', 355649685),
     ('item_kind', 1907901926),
-    ('tags', 1460345471),
+    ('tags', 1729446435),
     ('regions', 208533187),
     ('org_kind', 767728199),
     ('specialties', 889167589),
@@ -51,7 +51,7 @@ translations = {}
 for source, gid in sources.items():
     url = URL.format(gid)
     translations[source] = DF.Flow(
-        DF.load(url),
+        DF.load(url, headers=1),
         clean_row,
         DF.add_field('values', 'array',
                      default=extract_values),
