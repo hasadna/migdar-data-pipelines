@@ -10,7 +10,7 @@ from openpyxl import load_workbook
 import logging
 from dataflows import (
     Flow, printer, filter_rows, add_field, load,
-    concatenate, set_type, add_computed_field
+    concatenate, set_type, add_computed_field, parallelize
 )
 from datapackage_pipelines_migdar.flows.dump_to_es import es_dumper
 from datapackage_pipelines_migdar.flows.i18n import split_and_translate, fix_urls
@@ -61,6 +61,7 @@ def one(i):
 
 def get_sheets():
     def func(rows):
+        total = 0
         for row in rows:
             print('Attempting with %r' % row)
             wb = load_workbook(row['filename'])
@@ -83,11 +84,18 @@ def get_sheets():
                         continue
                     if i > 3:
                         break
+                    migdar_id_col = headers.index('migdar_id')
                     row['headers'] = i
+                    j = i + 1
+                    while sheet.cell(row=j, column=migdar_id_col).value:
+                        j += 1
+                    print('%s // %s: Found %r ROWS' % (row['filename'], sheet_name, j - i - 1))
+                    total += j - i - 1
                     break
                 if row.get('headers') is not None:
                     yield row
                     break
+        print('TOTAL ROWS', total)
     return func
 
 
@@ -132,7 +140,10 @@ def base_flow():
         )),
         add_field('filename', 'string',
                   default=lambda row: 'pubfiles/{modifiedTime}-{id}.xlsx'.format(**row)),
-        download_files(),
+        parallelize(
+            download_files(),
+            num_processors=16,
+        ),
         add_field('sheet', 'string'),
         add_field('headers', 'integer', 1),
         get_sheets(),
