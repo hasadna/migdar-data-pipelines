@@ -50,7 +50,7 @@ def download_files():
                 downloader = MediaIoBaseDownload(f, request)
                 done = False
                 while done is False:
-                    status, done = downloader.next_chunk()
+                    status, done = downloader.next_chunk(num_retries=3)
 
     return func
 
@@ -142,7 +142,7 @@ def base_flow():
                   default=lambda row: 'pubfiles/{modifiedTime}-{id}.xlsx'.format(**row)),
         parallelize(
             download_files(),
-            num_processors=16,
+            num_processors=8,
         ),
         add_field('sheet', 'string'),
         add_field('headers', 'integer', 1),
