@@ -1,3 +1,4 @@
+tableschema-elasticsearch<2.1.1
 dataflows-elasticsearch<0.1.2
 dataflows>=0.3.12
 gunicorn
