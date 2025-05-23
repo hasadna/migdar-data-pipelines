@@ -74,8 +74,10 @@ class my_dump_to_es(dump_to_es):
                     ]
                     for i, q in enumerate(queries):
                         ret = self.engine.delete_by_query(
-                            index=index_name,
-                            query=q
+                            index_name,
+                            dict(
+                                query=q
+                            )
                         )
                         logging.info('GOT (%d) %r', i, ret)
                 logging.info('UPDATE GOT %r', ret)
