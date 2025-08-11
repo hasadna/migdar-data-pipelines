@@ -24,11 +24,12 @@ zotero_fetch:
   - flow: datapackage_pipelines_migdar.flows.zotero
 
 
-publications:
-  dependencies:
-    - pipeline: ./zotero_fetch
-  pipeline:
-  - flow: datapackage_pipelines_migdar.flows.publications
+# google drive was deleted, we rely on existing data in elasticsearch restored by notebooks/restore_publications.ipynb
+#publications:
+#  dependencies:
+#    - pipeline: ./zotero_fetch
+#  pipeline:
+#  - flow: datapackage_pipelines_migdar.flows.publications
 
 
 sitemap:
