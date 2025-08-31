@@ -20,7 +20,7 @@ from datapackage_pipelines_migdar.flows.constants import REVISION
 KEY_PATTERN = 'publications/{migdar_id}'
 PAGE_TITLE_PATTERN = '{title}'
 
-SCOPES = ['https://www.googleapis.com/auth/drive']
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 try:
     credentials = Credentials.from_service_account_file(
         '/migdar-gdrive/secret-g-service-account.json', scopes=SCOPES)
@@ -28,75 +28,24 @@ except Exception:
     logging.exception('Failed to open creds!')
     credentials = Credentials.from_service_account_file(
         'gdrive_creds.json', scopes=SCOPES)
-drive_service = build('drive', 'v3', credentials=credentials)
 
+service = build('sheets', 'v4', credentials=credentials)
 
-def list_gdrive():
-    results = drive_service.files().list(
-        q="'16bSopg9nlQDBN8gsjW712xuBWy16gPW0' in parents",
-        fields='files(id,kind,name,mimeType,modifiedTime)').execute()
-    yield from results.get('files', [])
+GOOGLE_SHEETS_ID = '1IPRvpogUZ06R9zVRPdZeYfAwdrs9hx0iRB8zSFubl_o'
 
-
-def download_files():
-    os.makedirs('pubfiles', exist_ok=True)
-
-    def func(row):
-        filename = row['filename']
-        if not os.path.exists(filename):
-            print('Downloading', filename)
-            with open(filename, 'wb') as f:
-                request = drive_service.files().get_media(fileId=row['id'])
-                downloader = MediaIoBaseDownload(f, request)
-                done = False
-                while done is False:
-                    status, done = downloader.next_chunk(num_retries=3)
-
-    return func
-
-
-def one(i):
-    return len(list(filter(lambda x: x, i))) == 1
-
-
-def get_sheets():
-    def func(rows):
-        total = 0
-        for row in rows:
-            print('Attempting with %r' % row)
-            wb = load_workbook(row['filename'])
-            for sheet_name in wb.sheetnames:
-                if 'deleted' in sheet_name.strip().lower():
-                    continue
-                row = copy(row)
-                row['sheet'] = sheet_name
-                row['headers'] = None
-                sheet = wb[sheet_name]
-                for i, cells in enumerate(sheet.rows, start=1):
-                    headers = [x.value for x in cells]
-                    if not any(headers):
-                        continue
-                    assert one(x in headers
-                               for x in ['Domain', 'Life Domains']),\
-                        'DOMAIN %r' % list(zip(headers, [x.value for x in list(sheet.rows)[i+1]]))
-                    if 'migdar_id' not in headers:
-                        print('BAD HEADERS', row['name'], sheet_name)
-                        continue
-                    if i > 3:
-                        break
-                    migdar_id_col = headers.index('migdar_id')
-                    row['headers'] = i
-                    j = i + 1
-                    while sheet.cell(row=j, column=migdar_id_col).value:
-                        j += 1
-                    print('%s // %s: Found %r ROWS' % (row['filename'], sheet_name, j - i - 1))
-                    total += j - i - 1
-                    break
-                if row.get('headers') is not None:
-                    yield row
-                    break
-        print('TOTAL ROWS', total)
-    return func
+def list_all_sheet_ids(google_doc_id):
+    # Get all 'gid' numbers of the google spreadsheet:
+    spreadsheet = service.spreadsheets().get(
+        spreadsheetId=google_doc_id,
+        fields="sheets(properties(sheetId,title))"
+    ).execute()
+    ret = []
+    for sheet in spreadsheet['sheets']:
+        props = sheet['properties']
+        print(f"{props['title']} → gid={props['sheetId']}")
+        # append ret the full url of the sheet
+        ret.append(f"https://docs.google.com/spreadsheets/d/{google_doc_id}/edit#gid={props['sheetId']}")
+    return ret
 
 
 years = re.compile('[12][0-9]{3}')
@@ -132,31 +81,14 @@ def verify_migdar_id():
 
 
 def base_flow():
-    sources, *_ = Flow(
-        list_gdrive(),
-        filter_rows(lambda row: (
-            row['kind'] == 'drive#file' and
-            row['mimeType'] == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        )),
-        add_field('filename', 'string',
-                  default=lambda row: 'pubfiles/{modifiedTime}-{id}.xlsx'.format(**row)),
-        parallelize(
-            download_files(),
-            num_processors=8,
-        ),
-        add_field('sheet', 'string'),
-        add_field('headers', 'integer', 1),
-        get_sheets(),
-    ).results()
+    sources = list_all_sheet_ids(GOOGLE_SHEETS_ID)
     return Flow(
         *[
-            load(source['filename'],
-                 sheet=source['sheet'],
-                 headers=source['headers'],
+            load(source,
                  infer_strategy=load.INFER_STRINGS,
                  cast_strategy=load.CAST_TO_STRINGS,
-                 name=source['filename'])
-            for source in sources[0]
+                 name=source.split('#')[1].split('=')[1])
+            for source in sources
         ],
         filter_rows(lambda row: row.get('migdar_id') not in ('', 'None', None)),
         load('data/zotero/zotero.csv'),
@@ -170,13 +102,13 @@ def base_flow():
                 'notes': [],
                 'tags': ['Tags'],
                 'publisher': [],
-                'languages': ['language_code'],
-                'item_kind': ['Item Type', 'Item type', 'item_type'],
-                'pubyear': ['pubyear/pubdate'],
-                'life_areas': ['Life Domains', 'Domain'],
-                'source_kind': ['Resource Type', 'Resource type'],
-                'authors': ['author'],
-                'url': ['URL'],
+                'languages': [],
+                'item_kind': [],
+                'pubyear': [],
+                'life_areas': [],
+                'source_kind': [],
+                'authors': [],
+                'url': [],
 
             },
             target=dict(
