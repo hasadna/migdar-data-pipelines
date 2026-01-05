@@ -49,12 +49,12 @@ def check_broken():
         backoff = 10
         try:
             print('%s:CHECK:%s' % (datetime.datetime.now().isoformat(), row["url"]))
-            for _ in range(5):
-                resp = requests.get(row['url'], allow_redirects=True, headers=HEADERS, timeout=10, stream=True)
+            for _ in range(3):
+                resp = requests.head(row['url'], allow_redirects=True, headers=HEADERS, timeout=10)
                 if resp.status_code == 429:
                     time.sleep(backoff)
                     backoff *= 2
-                    error = 'Server Overload' 
+                    error = 'Server Overload'
                     continue
                 elif resp.status_code >= 300:
                     error = '%s: %s' % (resp.status_code, resp.reason)
@@ -65,6 +65,8 @@ def check_broken():
         except requests.exceptions.RequestException as e:
             error = str(e.__class__.__name__)
         except requests.exceptions.BaseHTTPError as e:
+            error = str(e.__class__.__name__)
+        except Exception as e:
             error = str(e.__class__.__name__)
         if error:
             print('%s:ERROR:%s: %s' % (datetime.datetime.now().isoformat(), row['url'], error))
