@@ -2,6 +2,7 @@ import dataflows as DF
 import re
 import requests
 import time
+import datetime
 
 RE = '(http[s]?://[-_?&A-Z0-9a-z./=%]+)'
 RE = re.compile(RE)
@@ -26,7 +27,7 @@ configuration = [
 
 URL_TEMPLATE='https://api.yodaat.org/data/{name}_in_es/data/{filename}.csv'
 HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:86.0) Gecko/20100101 Firefox/86.0',    
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:147.0) Gecko/20100101 Firefox/147.0',
 }
 
 
@@ -47,6 +48,7 @@ def check_broken():
         error = None
         backoff = 10
         try:
+            print(datetime.datetime.now().isoformat(), 'Checking', row['url'])
             while True:
                 resp = requests.get(row['url'], allow_redirects=True, headers=HEADERS, timeout=10, stream=True)
                 if resp.status_code == 429:
@@ -55,13 +57,14 @@ def check_broken():
                     continue
                 if resp.status_code >= 300:
                     error = '%s: %s' % (resp.status_code, resp.reason)
+                time.sleep(1)
                 break
         except requests.exceptions.RequestException as e:
             error = str(e.__class__.__name__)
         except requests.exceptions.BaseHTTPError as e:
             error = str(e.__class__.__name__)
         if error:
-            print(row['url'], error)
+            print(datetime.datetime.now().isoformat(), 'ERROR', row['url'], error)
             row['error'] = error
     return func
 
@@ -75,7 +78,7 @@ def get_title(title_field):
     return wrapper(title_field)
 
 def broken_links_flow():
-    return DF.Flow(
+    DF.Flow(
         *[
             DF.Flow(
                 DF.load(URL_TEMPLATE.format(**c), name=c['name']),
@@ -84,6 +87,10 @@ def broken_links_flow():
             )
             for c in configuration
         ],
+        DF.checkpoint('broken_links'),
+    ).process()
+    return DF.Flow(
+        DF.checkpoint('broken_links'),
         DF.add_field('urls', 'array', lambda r: RE.findall(str(r))),
         DF.add_field('link', 'string', lambda r: 'https://yodaat.org/item/{doc_id}'.format(**r)),
         DF.concatenate(dict(
@@ -96,7 +103,7 @@ def broken_links_flow():
         DF.add_field('error', 'string'),
         unwind(),
         DF.delete_fields(['urls']),
-        DF.parallelize(check_broken(), 4),
+        DF.parallelize(check_broken(), 16),
         DF.filter_rows(lambda r: r['error'] is not None),
     )
 
