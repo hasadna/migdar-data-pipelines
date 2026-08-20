@@ -1,7 +1,9 @@
 import dataflows as DF
 import datetime
 import hashlib
+import http.client
 import json
+import multiprocessing
 import os
 import re
 import requests
@@ -202,7 +204,10 @@ def probe(url, method):
         resp = requests.request(method, url, allow_redirects=True,
                                 headers=HEADERS, timeout=TIMEOUT, stream=True)
         try:
-            return resp.status_code, resp.reason
+            # Not every server sends a reason phrase, and 'שגיאה: 404' with
+            # nothing after the colon reads like a bug to whoever gets the file.
+            reason = resp.reason or http.client.responses.get(resp.status_code, '')
+            return resp.status_code, reason
         finally:
             resp.close()
     except Exception as e:
@@ -303,20 +308,23 @@ def get_field(field_name):
     return func
 
 
-def broken_links_flow():
+def broken_links_flow(limit_rows=None):
+    # A limited run gets its own checkpoint, so that a quick sample never ends
+    # up being served from - or serving - the cache of a full run.
+    checkpoint_name = 'broken_links' if limit_rows is None else 'broken_links_%d' % limit_rows
     DF.Flow(
         *[
             DF.Flow(
-                DF.load(URL_TEMPLATE.format(**c), name=c['name']),
+                DF.load(URL_TEMPLATE.format(**c), name=c['name'], limit_rows=limit_rows),
                 DF.add_field('__name', 'string', c['name'], resources=c['name']),
                 DF.add_field('__title', 'string', get_field(c['title']), resources=c['name']),
             )
             for c in configuration
         ],
-        DF.checkpoint('broken_links'),
+        DF.checkpoint(checkpoint_name),
     ).process()
     return DF.Flow(
-        DF.checkpoint('broken_links'),
+        DF.checkpoint(checkpoint_name),
         *[
             DF.Flow(
                 DF.add_field('__id', 'string', get_field(c['id']), resources=c['name']),
@@ -440,8 +448,14 @@ def flow(*_):
     )
 
 if __name__ == '__main__':
+    # DF.parallelize hands a closure to each worker process, which survives
+    # only under the 'fork' start method. That is the default wherever the
+    # pipeline actually runs; on macOS it is 'spawn', and the workers never
+    # come up, so a direct run hangs waiting for results that never arrive.
+    multiprocessing.set_start_method('fork')
+    # Run directly, this is a smoke test - the pipeline imports flow() instead.
     DF.Flow(
-        broken_links_flow(),
+        broken_links_flow(limit_rows=10),
         DF.printer(),
         DF.dump_to_path('data/broken_links'),
         DF.finalizer(convert_to_xlsx('data/broken_links.xlsx')),
