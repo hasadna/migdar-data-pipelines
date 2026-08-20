@@ -76,6 +76,8 @@ configuration = [
 ]
 
 URL_TEMPLATE='https://api.yodaat.org/data/{name}_in_es/data/{filename}.csv'
+# Where the report is published - the xlsx sits alongside the datapackage.json.
+DUMP_PATH = 'data/broken_links'
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:147.0) Gecko/20100101 Firefox/147.0',
 }
@@ -389,9 +391,15 @@ def clean_cell(value):
     return ILLEGAL_CHARS.sub(' ', value)[:MAX_CELL_LENGTH]
 
 
-def convert_to_xlsx(out_path, source='data/broken_links/datapackage.json'):
+def convert_to_xlsx(path=DUMP_PATH, filename='broken_links.xlsx'):
+    """Turn the dumped datapackage into the workbook the client actually opens.
+
+    Both paths are derived from the dump directory, so the workbook is always
+    published next to the datapackage.json it was built from.
+    """
     def func():
-        rows = DF.Flow(DF.load(source)).results()[0][0]
+        out_path = os.path.join(path, filename)
+        rows = DF.Flow(DF.load(os.path.join(path, 'datapackage.json'))).results()[0][0]
         rows.sort(key=lambda r: (
             STATUS_ORDER.index(r['status']) if r['status'] in STATUS_ORDER else len(STATUS_ORDER),
             r.get('name') or '',
@@ -443,8 +451,8 @@ def flow(*_):
         broken_links_flow(),
         DF.update_resource(-1, **{'dpp:streaming': True}),
         DF.printer(),
-        DF.dump_to_path('data/broken_links'),
-        DF.finalizer(convert_to_xlsx('data/broken_links.xlsx')),
+        DF.dump_to_path(DUMP_PATH),
+        DF.finalizer(convert_to_xlsx(DUMP_PATH)),
     )
 
 if __name__ == '__main__':
@@ -457,6 +465,6 @@ if __name__ == '__main__':
     DF.Flow(
         broken_links_flow(limit_rows=10),
         DF.printer(),
-        DF.dump_to_path('data/broken_links'),
-        DF.finalizer(convert_to_xlsx('data/broken_links.xlsx')),
+        DF.dump_to_path(DUMP_PATH),
+        DF.finalizer(convert_to_xlsx(DUMP_PATH)),
     ).process()
